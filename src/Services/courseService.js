@@ -77,7 +77,8 @@ export const courseServ = {
       console.error('Import error:', error);
       throw error;
     });
-  }
+  },
+
 };
 
 

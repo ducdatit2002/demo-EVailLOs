@@ -25,6 +25,20 @@ const CourseEdit = () => {
     });
   }, [id, form]);
 
+  const updateCLOs = async () => {
+    const values = await form.validateFields(["CLOs"]); // Chỉ validate và lấy dữ liệu từ phần CLOs
+    console.log("Updating CLOs with", values.CLOs);
+    // Gọi API cập nhật CLOs tại đây
+    // Không cần navigate sau khi cập nhật
+  };
+
+  const updateQuestions = async () => {
+    const values = await form.validateFields(["questions"]); // Chỉ validate và lấy dữ liệu từ phần questions
+    console.log("Updating Questions with", values.questions);
+    // Gọi API cập nhật questions tại đây
+    // Không cần navigate sau khi cập nhật
+  };
+
   const onFinish = async (values) => {
     try {
       await courseServ.editCourse(id, values);
@@ -99,8 +113,14 @@ const CourseEdit = () => {
         )}
       </Form.List>
 
-      <h2>Nhập Questions</h2>
-      <Form.List name="questions">
+      {/* <Form.Item>
+        <Button type="primary" onClick={updateCLOs}>
+          Update CLOs
+        </Button>
+      </Form.Item> */}
+
+      {/* <h2>Nhập Questions</h2> */}
+      {/* <Form.List name="questions">
         {(fields, { add, remove }) => (
           <>
             {fields.map(({ key, name, fieldKey, ...restField }) => (
@@ -178,8 +198,13 @@ const CourseEdit = () => {
             </Form.Item>
           </>
         )}
-      </Form.List>
-
+      </Form.List> */}
+{/* 
+      <Form.Item>
+        <Button type="primary" onClick={updateQuestions}>
+          Update Questions
+        </Button>
+      </Form.Item> */}
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Update Course

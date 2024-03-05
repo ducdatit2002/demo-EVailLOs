@@ -4,7 +4,6 @@ import Admin from "./Admin/Admin";
 import Spiner from "./Components/Spiner/Spiner";
 import Course from "./Admin/Course/Course";
 import CourseEdit from "./Admin/Course/CourseEdit";
-import CourseAddNew from "./Admin/Course/CourseAddNew";
 import AlwaysTop from "./Components/ScrollTop/AlwaysTop";
 function App() {
   return (
@@ -25,11 +24,7 @@ function App() {
             exact
             element={<Admin Component={CourseEdit} />}
           />
-          <Route
-            path="/admin/course/addnew"
-            exact
-            element={<Admin Component={CourseAddNew} />}
-          />
+
         </Routes>
       </BrowserRouter>
     </div>

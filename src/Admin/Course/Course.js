@@ -65,9 +65,7 @@ export default function Course() {
     <div className="container mx-auto">
       <h1 className="text-2xl">COURSE</h1>
       <div className="flex justify-between items-center">
-        {/* <NavLink to="/admin/course/addnew">
-          <Button type="primary">Thêm Khóa Học Mới</Button>
-        </NavLink> */}
+
         <Upload
           beforeUpload={beforeUpload}
           customRequest={({ file }) => handleFileUpload(file)}
