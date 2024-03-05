@@ -11,14 +11,16 @@ const CourseEdit = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [cloCount, setCloCount] = useState(0);
+  const [clos, setClos] = useState([]);
 
   useEffect(() => {
-    // Assuming courseServ.getCourse fetches course data including CLOs
     courseServ.getCourse(id).then((data) => {
       form.setFieldsValue({
         courseInfo: data.courseInfo,
         CLOs: data.CLOs,
+        questions: data.questions,
       });
+      setClos(data.CLOs); // Cập nhật state ở đây
       setCloCount(data.CLOs.length);
     });
   }, [id, form]);
@@ -96,7 +98,87 @@ const CourseEdit = () => {
           </>
         )}
       </Form.List>
-                  
+
+      <h2>Nhập Questions</h2>
+      <Form.List name="questions">
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <Space
+                key={key}
+                style={{ display: "flex", marginBottom: 8 }}
+                align="baseline"
+              >
+                <Form.Item
+                  {...restField}
+                  name={[name, "questionsId"]}
+                  fieldKey={[fieldKey, "questionsId"]}
+                  rules={[
+                    { required: true, message: "Please input Question ID" },
+                  ]}
+                >
+                  <Input placeholder="Question ID" />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[name, "questionsName"]}
+                  fieldKey={[fieldKey, "questionsName"]}
+                  rules={[
+                    { required: true, message: "Please input Question Name" },
+                  ]}
+                >
+                  <Input placeholder="Question Name" />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[name, "questionsNote"]}
+                  fieldKey={[fieldKey, "questionsNote"]}
+                >
+                  <Input placeholder="Question Note" />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[name, "maxScore"]}
+                  fieldKey={[fieldKey, "maxScore"]}
+                  rules={[
+                    { required: true, message: "Please input Max Score" },
+                  ]}
+                >
+                  <Input placeholder="Max Score" />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[name, "cloName"]}
+                  fieldKey={[fieldKey, "cloName"]}
+                  rules={[
+                    { required: true, message: "Please select a CLO Name" },
+                  ]}
+                >
+                  <Select placeholder="Select a CLO">
+                    {clos.map((clo, index) => (
+                      <Select.Option key={index} value={clo.cloName}>
+                        {clo.cloName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+
+                <MinusCircleOutlined onClick={() => remove(name)} />
+              </Space>
+            ))}
+            <Form.Item>
+              <Button
+                type="dashed"
+                onClick={() => add()}
+                block
+                icon={<PlusOutlined />}
+              >
+                Add Question
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
 
       <Form.Item>
         <Button type="primary" htmlType="submit">
