@@ -1,19 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "antd/dist/antd.min.css";
-import Admin from "./PagesAdmin/Admin";
+import Admin from "./Admin/Admin";
 import Spiner from "./Components/Spiner/Spiner";
-import User from "./PagesAdmin/User/User";
-import UserEdit from "./PagesAdmin/User/UserEdit";
-import UserAddNew from "./PagesAdmin/User/UserAddNew";
-import Room from "./PagesAdmin/Room/Room";
-import AddRoom from "./PagesAdmin/Room/AddRoom";
-import EditRoom from "./PagesAdmin/Room/EditRoom";
-import Position from "./PagesAdmin/Position/Position";
-import AddPosition from "./PagesAdmin/Position/AddPosition";
-import EditPosition from "./PagesAdmin/Position/EditPosition";
-import BookRoom from "./PagesAdmin/BookRoom/BookRoom";
-import AddBook from "./PagesAdmin/BookRoom/AddBook";
-import EditBooked from "./PagesAdmin/BookRoom/EditBooked";
+import Course from "./Admin/Course/Course";
+import CourseEdit from "./Admin/Course/CourseEdit";
+import CourseAddNew from "./Admin/Course/CourseAddNew";
 import AlwaysTop from "./Components/ScrollTop/AlwaysTop";
 function App() {
   return (
@@ -22,67 +13,22 @@ function App() {
       <BrowserRouter>
       <AlwaysTop/>
         <Routes>
-        <Route path="/" element={<Admin Component={User} />} />
-          <Route path="/admin" exact element={<Admin Component={User} />} />
+        <Route path="/" element={<Admin Component={Course} />} />
+          <Route path="/admin" exact element={<Admin Component={Course} />} />
           <Route
-            path="/admin/user"
+            path="/admin/course"
             exact
-            element={<Admin Component={User} />}
+            element={<Admin Component={Course} />}
           />
           <Route
-            path="/admin/user/edit/:id"
+            path="/admin/course/edit/:id"
             exact
-            element={<Admin Component={UserEdit} />}
+            element={<Admin Component={CourseEdit} />}
           />
           <Route
-            path="/admin/user/addnew"
+            path="/admin/course/addnew"
             exact
-            element={<Admin Component={UserAddNew} />}
-          />
-          <Route
-            path="/admin/room"
-            exact
-            element={<Admin Component={Room} />}
-          />
-          <Route
-            path="/admin/addRoom"
-            exact
-            element={<Admin Component={AddRoom} />}
-          />
-          <Route
-            path="/admin/editRoom/:id"
-            exact
-            element={<Admin Component={EditRoom} />}
-          />
-          <Route
-            path="/admin/position"
-            exact
-            element={<Admin Component={Position} />}
-          />
-          <Route
-            path="/admin/addPosition"
-            exact
-            element={<Admin Component={AddPosition} />}
-          />
-          <Route
-            path="/admin/editPosition/:id"
-            exact
-            element={<Admin Component={EditPosition} />}
-          />
-          <Route
-            path="/admin/booked"
-            exact
-            element={<Admin Component={BookRoom} />}
-          />
-          <Route
-            path="/admin/addBook"
-            exact
-            element={<Admin Component={AddBook} />}
-          />
-          <Route
-            path="/admin/editBooked/:id"
-            exact
-            element={<Admin Component={EditBooked} />}
+            element={<Admin Component={CourseAddNew} />}
           />
         </Routes>
       </BrowserRouter>

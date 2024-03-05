@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import {
-  UserOutlined,
-  HomeFilled,
-  PayCircleFilled,
-  CarFilled,
+  UserOutlined
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import { NavLink } from "react-router-dom";
@@ -17,18 +14,7 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem(<NavLink to="/admin/user">User</NavLink>, "sub1", <UserOutlined />),
-  getItem(<NavLink to="/admin/room">Room</NavLink>, "sub2", <HomeFilled />),
-  getItem(
-    <NavLink to="/admin/position">Position</NavLink>,
-    "sub3",
-    <CarFilled />
-  ),
-  getItem(
-    <NavLink to="/admin/booked">Booked</NavLink>,
-    "sub4",
-    <PayCircleFilled />
-  )
+  getItem(<NavLink to="/admin/course">Course</NavLink>, "sub1", <UserOutlined />),
 ];
 export default function Admin({ Component }) {
   const [collapsed, setCollapsed] = useState(false);
