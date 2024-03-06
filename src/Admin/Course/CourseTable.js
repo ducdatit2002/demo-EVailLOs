@@ -39,6 +39,11 @@ export default function CourseTable({ dataListCourse = [] }) {
     },
     // Cập nhật thêm các cột tùy theo bạn muốn hiển thị thông tin gì từ `courseInfo`
     {
+      title: "Class ID",
+      dataIndex: "classId",
+      key: "classId",
+    },
+    {
       title: "Semester",
       dataIndex: "semester",
       key: "semester",
@@ -83,6 +88,12 @@ export default function CourseTable({ dataListCourse = [] }) {
           >
             <span className="hover:cursor-pointer text-red-500">Xóa</span>
           </Popconfirm>
+          <span
+            className="hover:cursor-pointer text-purple-500"
+            onClick={() => navigate(`/admin/course/edit3/${record.id}`)}
+          >
+            Sửa
+          </span>
           <span
             className="hover:cursor-pointer text-blue-500"
             onClick={() => navigate(`/admin/course/edit/${record.id}`)}

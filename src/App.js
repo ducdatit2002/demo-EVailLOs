@@ -5,6 +5,7 @@ import Spiner from "./Components/Spiner/Spiner";
 import Course from "./Admin/Course/Course";
 import CourseEdit from "./Admin/Course/CourseEdit";
 import CourseEdit2 from "./Admin/Course/CourseEdit2";
+import CourseEdit3 from "./Admin/Course/CourseEdit3";
 import ExamTeams from "./Admin/ExamTeams/ExamTeams";
 import ExamTeamsEdit from "./Admin/ExamTeams/ExamTeamsEdit";
 import Students from "./Admin/Students/Students";
@@ -32,6 +33,11 @@ function App() {
             path="/admin/course/edit2/:id"
             exact
             element={<Admin Component={CourseEdit2} />}
+          />
+          <Route
+            path="/admin/course/edit3/:id"
+            exact
+            element={<Admin Component={CourseEdit3} />}
           />
           <Route
             path="/admin/examteams"
