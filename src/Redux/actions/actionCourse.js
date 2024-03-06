@@ -1,12 +1,12 @@
 import { SET_DATA_COURSE, SET_COURSE } from "../constant/constantCourse";
 import { courseServ } from "../../Services/courseService";
 
-const setCourseSuccess = (successValue) => {
-  return {
-    type: SET_COURSE,
-    payload: successValue,
-  };
-};
+// const setCourseSuccess = (successValue) => {
+//   return {
+//     type: SET_COURSE,
+//     payload: successValue,
+//   };
+// };
 
 const setDataListCourseSuccess = (successValue) => {
   return {
@@ -65,4 +65,19 @@ export const importCourses = (data) => {
       });
   };
   
+};
+
+export const importExamTeams = (examTeamsData) => {
+  return {
+    type: 'IMPORT_EXAM_TEAMS',
+    payload: examTeamsData,
+  };
+};
+
+// redux/actions.js
+export const updateExamTeams = (data) => {
+  return {
+    type: 'UPDATE_EXAM_TEAMS',
+    payload: data,
+  };
 };

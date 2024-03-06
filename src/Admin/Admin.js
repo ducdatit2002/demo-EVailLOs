@@ -15,7 +15,8 @@ function getItem(label, key, icon, children) {
 }
 const items = [
   getItem(<NavLink to="/admin/course">Course</NavLink>, "sub1", <UserOutlined />),
-  getItem(<NavLink to="/admin/examteams">Exam Teams</NavLink>, "sub1", <UserOutlined />),
+  getItem(<NavLink to="/admin/examteams">Exam Teams</NavLink>, "sub2", <UserOutlined />),
+  getItem(<NavLink to="/admin/students">Students</NavLink>, "sub3", <UserOutlined />),
 ];
 export default function Admin({ Component }) {
   const [collapsed, setCollapsed] = useState(false);

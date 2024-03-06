@@ -87,7 +87,13 @@ export default function CourseTable({ dataListCourse = [] }) {
             className="hover:cursor-pointer text-blue-500"
             onClick={() => navigate(`/admin/course/edit/${record.id}`)}
           >
-            Sửa
+            Nhập CLOs
+          </span>
+          <span
+            className="hover:cursor-pointer text-green-500"
+            onClick={() => navigate(`/admin/course/edit2/${record.id}`)}
+          >
+            Nhập bảng điểm 
           </span>
         </div>
       ),

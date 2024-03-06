@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Input, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { NavLink } from "react-router-dom";
 import CourseTable from "./CourseTable";
 import {
   searchCourse,
@@ -74,13 +73,14 @@ export default function Course() {
           <Button icon={<UploadOutlined />}>Import từ Excel</Button>
         </Upload>
       </div>
-      <Search
+      <br/>
+      {/* <Search
         placeholder="Nhập tên khóa học muốn tìm"
         allowClear
         onSearch={onSearch}
         style={{ width: 600 }}
         className="my-4"
-      />
+      /> */}
       <CourseTable dataListCourse={dataListCourse} />
     </div>
   );
