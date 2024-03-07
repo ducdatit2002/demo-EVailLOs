@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, Input, Button, message, Space, Select } from "antd";
+import { Form, Input, Button, message, Space } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { courseServ } from "../../Services/courseService";
-
-const { Option } = Select;
 
 const CourseEdit = () => {
   let { id } = useParams();
@@ -25,19 +23,6 @@ const CourseEdit = () => {
     });
   }, [id, form]);
 
-  const updateCLOs = async () => {
-    const values = await form.validateFields(["CLOs"]); // Chỉ validate và lấy dữ liệu từ phần CLOs
-    console.log("Updating CLOs with", values.CLOs);
-    // Gọi API cập nhật CLOs tại đây
-    // Không cần navigate sau khi cập nhật
-  };
-
-  const updateQuestions = async () => {
-    const values = await form.validateFields(["questions"]); // Chỉ validate và lấy dữ liệu từ phần questions
-    console.log("Updating Questions with", values.questions);
-    // Gọi API cập nhật questions tại đây
-    // Không cần navigate sau khi cập nhật
-  };
 
   const onFinish = async (values) => {
     try {
