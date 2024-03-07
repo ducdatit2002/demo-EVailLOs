@@ -5,24 +5,34 @@ const StudentsTable = () => {
   // Các cột của bảng
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: 'No',
+      dataIndex: 'no',
+      key: 'no',
     },
     {
-      title: 'Tên',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'Student ID',
+      dataIndex: 'studentId',
+      key: 'studentId',
     },
     {
-      title: 'Lớp',
+      title: 'Student Name',
+      dataIndex: 'studentName',
+      key: 'studentName',
+    },
+    {
+      title: 'Class',
       dataIndex: 'class',
       key: 'class',
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: 'Violation',
+      dataIndex: 'violation',
+      key: 'violation',
+    },
+    {
+      title: 'Note',
+      dataIndex: 'note',
+      key: 'note',
     },
   ];
 
@@ -30,19 +40,41 @@ const StudentsTable = () => {
   const data = [
     {
       key: '1',
-      id: 1,
-      name: 'Nguyễn Văn A',
-      class: '10A1',
-      email: 'vana@example.com',
+      no: 1,
+      studentId: 'ITITIU20000',
+      studentName: 'Nguyễn Văn A',
+      class: 'ITCS20IU',
+      violation: 'None',
+      note: 'Good student',
     },
     {
       key: '2',
-      id: 2,
-      name: 'Trần Thị B',
-      class: '10A2',
-      email: 'thib@example.com',
+      no: 2,
+      studentId: 'ITITIU20001',
+      studentName: 'Trần Thị B',
+      class: 'ITCS20IU',
+      violation: '2 times',
+      note: 'Needs improvement',
     },
-    // Thêm nhiều sinh viên tại đây
+    {
+      key: '3',
+      no: 3,
+      studentId: 'ITITIU20003',
+      studentName: 'Phạm Văn C',
+      class: 'ITCS20IU',
+      violation: '1 time',
+      note: 'Average student',
+    },
+    {
+      key: '4',
+      no: 4,
+      studentId: 'ITITIU20004',
+      studentName: 'Hoàng Thị D',
+      class: 'ITCS20IU',
+      violation: 'None',
+      note: 'Excellent student',
+    },
+    // Add more students here if needed
   ];
 
   return <Table columns={columns} dataSource={data} />;
