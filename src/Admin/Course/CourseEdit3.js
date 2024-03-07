@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, Input, Button, message, Space } from "antd";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { Form, Input, Button, message } from "antd";
+
 import { courseServ } from "../../Services/courseService";
 
 const CourseEdit = () => {
@@ -41,47 +41,54 @@ const CourseEdit = () => {
       <h2>Course Info</h2>
       <Form.Item
         label="Course ID"
-        name={['courseInfo', 'courseId']}
-        rules={[{ required: true, message: 'Please input the course ID!' }]}
+        name={["courseInfo", "courseId"]}
+        rules={[{ required: true, message: "Please input the course ID!" }]}
       >
         <Input />
       </Form.Item>
       <Form.Item
         label="Course Name"
-        name={['courseInfo', 'courseName']}
-        rules={[{ required: true, message: 'Please input the course name!' }]}
+        name={["courseInfo", "courseName"]}
+        rules={[{ required: true, message: "Please input the course name!" }]}
       >
         <Input />
       </Form.Item>
       <Form.Item
         label="Semester"
-        name={['courseInfo', 'semester']}
-        rules={[{ required: true, message: 'Please input the semester!' }]}
+        name={["courseInfo", "semester"]}
+        rules={[{ required: true, message: "Please input the semester!" }]}
       >
         <Input />
       </Form.Item>
       <Form.Item
         label="School Year"
-        name={['courseInfo', 'schoolYear']}
-        rules={[{ required: true, message: 'Please input the school year!' }]}
+        name={["courseInfo", "schoolYear"]}
+        rules={[{ required: true, message: "Please input the school year!" }]}
       >
         <Input />
       </Form.Item>
       <Form.Item
         label="Class ID"
-        name={['courseInfo', 'classId']}
-        rules={[{ required: true, message: 'Please input the class ID!' }]}
+        name={["courseInfo", "classId"]}
+        rules={[{ required: true, message: "Please input the class ID!" }]}
       >
         <Input />
       </Form.Item>
       <Form.Item
         label="Teacher ID"
-        name="teacherId"
-        rules={[{ required: true, message: 'Please input the teacher ID!' }]}
+        name={["courseInfo", "teacherId"]}
+        rules={[{ required: true, message: "Please input the teacher ID!" }]}
       >
         <Input />
       </Form.Item>
-
+      <Form.Item>
+        <Button
+          style={{ backgroundColor: "purple", color: "white" }} // Thêm màu xanh lá và màu chữ trắng
+          onClick={() => navigate("/admin/course")} // Sử dụng navigate để chuyển hướng
+        >
+          Cancel
+        </Button>
+      </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Submit
