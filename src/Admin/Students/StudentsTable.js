@@ -1,13 +1,36 @@
 import React from 'react';
-import { Table } from 'antd';
+import { message, Popconfirm, Table } from "antd";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { studentServ } from "../../Services/studentService";
+import { setDataListStudent } from "../../Redux/actions/actionStudent";
 
-const StudentsTable = () => {
+
+export default function StudentTable({dataListStudent = []}){
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const transformedData = transformData(dataListStudent);
+
+
+function transformData(data){
+  return data.map((item) => ({
+    key: item.No,
+    id: item.No,
+    studentId: item.studentInfo.studentId,
+    studentName: item.studentInfo.studentName,
+    classId: item.studentInfo.classId,
+    violation: item.studentInfo.violation,
+    note: item.studentInfo.note,
+  }));
+}
+
+console.log(dataListStudent);
   // Các cột của bảng
   const columns = [
     {
       title: 'No',
-      dataIndex: 'no',
-      key: 'no',
+      dataIndex: 'No',
+      key: 'No',
     },
     {
       title: 'Student ID',
@@ -21,8 +44,8 @@ const StudentsTable = () => {
     },
     {
       title: 'Class',
-      dataIndex: 'class',
-      key: 'class',
+      dataIndex: 'classId',
+      key: 'classId',
     },
     {
       title: 'Violation',
@@ -34,50 +57,47 @@ const StudentsTable = () => {
       dataIndex: 'note',
       key: 'note',
     },
+
+    {
+      title: "Thao tác",
+      key: "action",
+      render: (text, record) => (
+        <div className="space-x-2">
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa?"
+            onConfirm={() => {
+              studentServ
+                .deleteStudent(record.id)
+                .then(() => {
+                  message.success("Xóa thành công");
+                  // Cập nhật dataListCourse để loại bỏ khóa học đã xóa
+                  const updatedDataListStudent = dataListStudent.filter(
+                    (student) => student.id !== record.id
+                  );
+                  dispatch(setDataListStudent(updatedDataListStudent));
+                })
+
+                .catch((err) => {
+                  message.error("Xóa thất bại");
+                  console.error(err);
+                });
+            }}
+            okText="Yes"
+            cancelText="No"
+          >
+            <span className="hover:cursor-pointer text-red-500">Xóa</span>
+          </Popconfirm>
+          <span
+            className="hover:cursor-pointer text-purple-500"
+            onClick={() => navigate(`/admin/student/studentEdit/${record.id}`)}
+          >
+            Sửa
+          </span>
+        </div>
+      ),
+    },
   ];
 
-  // Dữ liệu giả định, thay thế bằng dữ liệu thực tế từ API hoặc state
-  const data = [
-    {
-      key: '1',
-      no: 1,
-      studentId: 'ITITIU20000',
-      studentName: 'Nguyễn Văn A',
-      class: 'ITCS20IU',
-      violation: 'None',
-      note: 'Good student',
-    },
-    {
-      key: '2',
-      no: 2,
-      studentId: 'ITITIU20001',
-      studentName: 'Trần Thị B',
-      class: 'ITCS20IU',
-      violation: '2 times',
-      note: 'Needs improvement',
-    },
-    {
-      key: '3',
-      no: 3,
-      studentId: 'ITITIU20003',
-      studentName: 'Phạm Văn C',
-      class: 'ITCS20IU',
-      violation: '1 time',
-      note: 'Average student',
-    },
-    {
-      key: '4',
-      no: 4,
-      studentId: 'ITITIU20004',
-      studentName: 'Hoàng Thị D',
-      class: 'ITCS20IU',
-      violation: 'None',
-      note: 'Excellent student',
-    },
-    // Add more students here if needed
-  ];
+  return <Table columns={columns} dataSource={transformedData} />;
+}
 
-  return <Table columns={columns} dataSource={data} />;
-};
-
-export default StudentsTable;
