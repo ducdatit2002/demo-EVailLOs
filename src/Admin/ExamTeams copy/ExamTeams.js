@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
-import { importExamTeams } from "../../Redux/actions/actionExamteams";
+import { importExamTeams } from "../../Redux/actions/actionCourse";
 import ExamTeamsTable from "./ExamTeamsTable";
 
 export default function ExamTeams() {

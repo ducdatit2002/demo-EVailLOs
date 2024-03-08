@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Table } from 'antd';
 
 export default function ExamTeamsTable() {
-  const examTeamsList = useSelector(state => state.examteamsReducer.examTeamsList || []);
+  const examTeamsList = useSelector(state => state.examTeamsReducer.examTeamsList || []);
 
   // Dynamically generate columns based on the questions present in the first item, if available
   let questionColumns = [];

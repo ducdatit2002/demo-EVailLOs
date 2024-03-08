@@ -74,13 +74,13 @@ export default function Course() {
         </Upload>
       </div>
       <br/>
-      {/* <Search
+      <Search
         placeholder="Nhập tên khóa học muốn tìm"
         allowClear
         onSearch={onSearch}
         style={{ width: 600 }}
         className="my-4"
-      /> */}
+      />
       <CourseTable dataListCourse={dataListCourse} />
     </div>
   );
