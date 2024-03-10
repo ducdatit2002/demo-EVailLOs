@@ -3,14 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Form, Input, Button, message, Space, Select } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { answerStructureServ } from "../../Services/answerStructureService";
+
 const { Option } = Select;
 
 const AnswerStructureEdit = () => {
   let { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [answerStructureCount, setAnswerStructureCount] = useState(0);
-  const [answerStructures, setAnswerStructures] = useState([]);
+  const [cloCount, setCloCount] = useState(0);
+  const [clos, setClos] = useState([]);
+  const [warningMessage, setWarningMessage] = useState(""); // State for warning message
+  const [isFormValid, setIsFormValid] = useState(true); // State to track form validity
+
 
   useEffect(() => {
     answerStructureServ.getAnswerStructure(id).then((data) => {
@@ -19,25 +23,10 @@ const AnswerStructureEdit = () => {
         CLOs: data.CLOs,
         questions: data.questions,
       });
-      setAnswerStructures(data.CLOs); // Cập nhật state ở đây
-      setAnswerStructureCount(data.CLOs.length);
+      setClos(data.CLOs);
+      setCloCount(data.CLOs.length);
     });
   }, [id, form]);
-
-
-  const updateQuestions = async () => {
-    const values = await form.validateFields(["questions"]); // Chỉ validate và lấy dữ liệu từ phần questions
-    console.log("Updating Questions with", values.questions);
-    // Gọi API cập nhật questions tại đây
-    // Không cần navigate sau khi cập nhật
-  };
-
-  const updateCLOs = async () => {
-    const values = await form.validateFields(["CLOs"]); // Chỉ validate và lấy dữ liệu từ phần CLOs
-    console.log("Updating CLOs with", values.CLOs);
-    // Gọi API cập nhật CLOs tại đây
-    // Không cần navigate sau khi cập nhật
-  };
 
   const onFinish = async (values) => {
     try {
@@ -50,76 +39,102 @@ const AnswerStructureEdit = () => {
     }
   };
 
+  const onValuesChange = (changedValues, allValues) => {
+    const totalMaxScore = allValues.questions.reduce((sum, question) => sum + parseInt(question.maxScore, 10), 0);
+    if (totalMaxScore > allValues.scoreLadder) {
+      setWarningMessage("The sum of all max scores cannot exceed the score ladder.");
+      setIsFormValid(false); // Set form as invalid
+    } else {
+      setWarningMessage("");
+      setIsFormValid(true); // Set form as valid
+    }
+ };
   return (
     <Form
       form={form}
       onFinish={onFinish}
+      onValuesChange={onValuesChange} 
       layout="vertical"
       name="editAnswerStructureForm"
-      initialValues={{ questionId: [] }}
+      initialValues={{ CLOs: [], questions: [] }}
     >
-      <h2>Nhập question id</h2>
-      <Form.List name="AnswerStructure">
-        {(fields, { add, remove }) => (
-          <>
-            {fields.map((field) => (
-              <Space
-                key={field.key}
-                style={{ display: "flex", marginBottom: 8 }}
-                align="baseline"
-              >
-                <Form.Item
-                  {...field}
-                  name={[field.name, "questionId"]}
-                  fieldKey={[field.fieldKey, "questionId"]}
-                  rules={[{ required: true, message: "Please input Question ID" }]}
-                >
-                  <Input placeholder="Question ID" />
-                </Form.Item>
-                <Form.Item
-                  {...field}
-                  name={[field.name, "questionName"]}
-                  fieldKey={[field.fieldKey, "questionName"]}
-                  rules={[{ required: true, message: "Please input question name" }]}
-                >
-                  <Input placeholder="Question Name" />
-                </Form.Item>
-                <Form.Item
-                  {...field}
-                  name={[field.name, "questionMaxScore"]}
-                  fieldKey={[field.fieldKey, "questionMaxScore"]}
-                  rules={[{ required: true, message: "Please input question max score" }]}
-                >
-                  <Input placeholder="Question Max Score" />
-                </Form.Item>
-                <Form.Item
-                  {...field}
-                  name={[field.name, "cloId"]}
-                  fieldKey={[field.fieldKey, "cloId"]}
-                >
-                  <Input placeholder="Enter CLO IDs separated by commas" />
-                </Form.Item>
-                <MinusCircleOutlined
-                  onClick={() => {
-                    remove(field.name);
-                    setAnswerStructureCount(answerStructureCount - 1);
-                  }}
-                />
-              </Space>
-            ))}
-            <Form.Item>
-              <Button
-                type="dashed"
-                onClick={() => add({ questionId: 0 })} // Thêm question id mới với question id mặc định là 0
-                block
-                icon={<PlusOutlined />}
-              >
-                Add Answer Structure
-              </Button>
-            </Form.Item>
-          </>
-        )}
-      </Form.List>
+      {/* Existing CLOs Form.List */}
+      {/* ... */}
+
+      {/* Questions Form.List */}
+      <h2>Input Questions</h2>
+          {/* Score Ladder Field */}
+          <Form.Item
+        name="scoreLadder"
+        label="Score Ladder"
+        rules={[{ required: true, message: "Please input the score ladder" }]}
+      >
+        <Input placeholder="Score Ladder" />
+      </Form.Item>
+            {/* Display warning message */}
+            {warningMessage && <div style={{ color: 'red' }}>{warningMessage}</div>}
+
+      
+      <Form.List name="questions">
+  {(fields, { add, remove }) => (
+    <>
+      {fields.map(({ key, name, fieldKey, ...restField }) => ( // Cập nhật dòng này để khai báo đúng các biến
+        <Space key={key} style={{ display: "flex", marginBottom: 8 }} align="baseline">
+          {/* Các Form.Item khác */}
+          <Form.Item
+            {...restField}
+            name={[name, "questionsId"]}
+            fieldKey={[fieldKey, "questionsId"]}
+            rules={[{ required: true, message: "Please input Question ID" }]}
+          >
+            <Input placeholder="Question ID" />
+          </Form.Item>
+       
+      
+          <Form.Item
+            {...restField}
+            name={[name, "maxScore"]}
+            fieldKey={[fieldKey, "maxScore"]}
+            rules={[{ required: true, message: "Please input Max Score" }]}
+          >
+            <Input placeholder="Max Score" />
+          </Form.Item>
+          <Form.Item
+            {...restField}
+            name={[name, "questionsNote"]}
+            fieldKey={[fieldKey, "questionsNote"]}
+          >
+            <Input placeholder="Question Note" />
+          </Form.Item>
+          <Form.Item
+            {...restField}
+            name={[name, "cloIds"]}
+            fieldKey={[fieldKey, "cloIds"]}
+            rules={[{ required: true, message: "Please select CLO(s)" }]}
+          >
+            <Select
+              mode="multiple"
+              placeholder="Select CLO(s)"
+              style={{ width: "100%" }}
+            >
+              {clos.map(clo => (
+                <Select.Option key={clo.cloId} value={clo.cloId}>
+                  {clo.cloId}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <MinusCircleOutlined onClick={() => remove(name)} />
+        </Space>
+      ))}
+      <Form.Item>
+      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />} disabled={!isFormValid}>
+          Add Question
+        </Button>
+      </Form.Item>
+    </>
+  )}
+</Form.List>
 
 
       <Form.Item>

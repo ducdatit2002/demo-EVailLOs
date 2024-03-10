@@ -1,4 +1,4 @@
-import { SET_DATA_STUDENT, SET_DATA_Student, SET_STUDENT } from "../constant/constantStudent.js";
+import { SET_DATA_STUDENT, SET_STUDENT } from "../constant/constantStudent.js";
 import { studentServ } from "../../Services/studentService.js";
 
 // const setStudentSuccess = (successValue) => {

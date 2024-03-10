@@ -11,26 +11,26 @@ export default function StudentTable({dataListStudent = []}){
   const navigate = useNavigate();
   const transformedData = transformData(dataListStudent);
 
-
-function transformData(data){
-  return data.map((item) => ({
-    key: item.No,
-    id: item.No,
-    studentId: item.studentInfo.studentId,
-    studentName: item.studentInfo.studentName,
-    classId: item.studentInfo.classId,
-    violation: item.studentInfo.violation,
-    note: item.studentInfo.note,
-  }));
-}
+  function transformData(data) {
+    return data.map((item) => ({
+       key: item.studentInfo.studentId, // Assuming studentId is unique and can be used as a key
+       no: item.studentInfo.No,
+       studentId: item.studentInfo.studentId,
+       studentName: item.studentInfo.studentName,
+       classId: item.studentInfo.classId,
+       violation: item.studentInfo.violation,
+       note: item.studentInfo.note,
+    }));
+   }
+   
 
 console.log(dataListStudent);
   // Các cột của bảng
   const columns = [
     {
       title: 'No',
-      dataIndex: 'No',
-      key: 'No',
+      dataIndex: 'no',
+      key: 'no',
     },
     {
       title: 'Student ID',
@@ -70,7 +70,7 @@ console.log(dataListStudent);
                 .deleteStudent(record.id)
                 .then(() => {
                   message.success("Xóa thành công");
-                  // Cập nhật dataListCourse để loại bỏ khóa học đã xóa
+                  // Cập nhật dataListStudent để loại bỏ student đã xóa
                   const updatedDataListStudent = dataListStudent.filter(
                     (student) => student.id !== record.id
                   );

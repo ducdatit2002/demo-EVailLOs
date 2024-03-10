@@ -45,7 +45,6 @@ export default function Student() {
           classId: item.classId,
           violation: item.violation,
           note: item.note
-  
         },
   
       }));

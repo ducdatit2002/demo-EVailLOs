@@ -4,12 +4,12 @@ import Admin from "./Admin/Admin";
 import Spiner from "./Components/Spiner/Spiner";
 import Course from "./Admin/Course/Course";
 import CourseEdit from "./Admin/Course/CourseEdit";
-import CourseEdit2 from "./Admin/Course/CourseEdit2";
 import CourseEdit3 from "./Admin/Course/CourseEdit3";
 import ExamTeams from "./Admin/ExamTeams/ExamTeams";
 import ExamTeamsEdit from "./Admin/ExamTeams/ExamTeamsEdit";
 import Students from "./Admin/Students/Students";
 import AlwaysTop from "./Components/ScrollTop/AlwaysTop";
+import AnswerStructureEdit from "./Admin/AnswerStructure/AnswerStructureEdit";
 function App() {
   return (
     <div className="">
@@ -29,11 +29,7 @@ function App() {
             exact
             element={<Admin Component={CourseEdit} />}
           />
-          <Route
-            path="/admin/course/edit2/:id"
-            exact
-            element={<Admin Component={CourseEdit2} />}
-          />
+         
           <Route
             path="/admin/course/edit3/:id"
             exact
@@ -53,6 +49,11 @@ function App() {
             path="/admin/students"
             exact
             element={<Admin Component={Students} />}
+          />
+           <Route
+            path="/admin/answerStructure/:id"
+            exact
+            element={<Admin Component={AnswerStructureEdit} />}
           />
         </Routes>
       </BrowserRouter>

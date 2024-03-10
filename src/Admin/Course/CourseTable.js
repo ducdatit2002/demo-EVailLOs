@@ -38,26 +38,13 @@ export default function CourseTable({ dataListCourse = [] }) {
       key: "courseName",
     },
     // Cập nhật thêm các cột tùy theo bạn muốn hiển thị thông tin gì từ `courseInfo`
+   
     {
-      title: "Class ID",
-      dataIndex: "classId",
-      key: "classId",
+      title: "Nof. CLOs",
+      dataIndex: "nofCLOs",
+      key: "nofCLOs",
     },
-    {
-      title: "Semester",
-      dataIndex: "semester",
-      key: "semester",
-    },
-    {
-      title: "Teacher",
-      dataIndex: "teacherId",
-      key: "teacherId",
-    },
-    {
-      title: "School Year",
-      dataIndex: "schoolYear",
-      key: "schoolYear",
-    },
+   
     // Cột Thao tác không thay đổi
     {
       title: "Thao tác",
@@ -100,12 +87,12 @@ export default function CourseTable({ dataListCourse = [] }) {
           >
             Nhập CLOs
           </span>
-          <span
+         {/*  <span
             className="hover:cursor-pointer text-green-500"
-            onClick={() => navigate(`/admin/course/edit2/${record.id}`)}
+            onClick={() => navigate(`/admin/answerStructure/${record.id}`)}
           >
             Nhập bảng điểm 
-          </span>
+          </span> */}
         </div>
       ),
     },

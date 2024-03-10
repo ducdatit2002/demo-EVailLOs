@@ -5,11 +5,11 @@ import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { courseServ } from "../../Services/courseService";
 
 const CourseEdit = () => {
-  let { id } = useParams();
-  const navigate = useNavigate();
-  const [form] = Form.useForm();
+ let { id } = useParams();
+ const navigate = useNavigate();
+ const [form] = Form.useForm();
 
-  useEffect(() => {
+ useEffect(() => {
     courseServ.getCourse(id).then((data) => {
       form.setFieldsValue({
         courseInfo: data.courseInfo,
@@ -17,9 +17,9 @@ const CourseEdit = () => {
         questions: data.questions,
       });
     });
-  }, [id, form]);
+ }, [id, form]);
 
-  const onFinish = async (values) => {
+ const onFinish = async (values) => {
     try {
       await courseServ.editCourse(id, values);
       message.success("Course updated successfully");
@@ -28,12 +28,20 @@ const CourseEdit = () => {
       message.error("Failed to update course");
       console.error(err);
     }
-  };
+ };
 
-  return (
+ const onValuesChange = (changedValues, allValues) => {
+    // Update nof. CLOs based on the number of CLOs in the list
+    if (changedValues.CLOs) {
+      form.setFieldsValue({ nofClos: allValues.CLOs.length });
+    }
+ };
+
+ return (
     <Form
       form={form}
       onFinish={onFinish}
+      onValuesChange={onValuesChange}
       layout="vertical"
       name="editCourseForm"
       initialValues={{ CLOs: [] }}
@@ -53,42 +61,68 @@ const CourseEdit = () => {
       >
         <Input />
       </Form.Item>
+
+      <h2>Course Learning Outcomes (CLOs)</h2>
       <Form.Item
-        label="Semester"
-        name={['courseInfo', 'semester']}
-        rules={[{ required: true, message: 'Please input the semester!' }]}
+        label="Number of CLOs"
+        name="nofClos"
+        rules={[{ required: true, message: 'Please input the Number of CLOs!' }]}
       >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="School Year"
-        name={['courseInfo', 'schoolYear']}
-        rules={[{ required: true, message: 'Please input the school year!' }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Class ID"
-        name={['courseInfo', 'classId']}
-        rules={[{ required: true, message: 'Please input the class ID!' }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Teacher ID"
-        name="teacherId"
-        rules={[{ required: true, message: 'Please input the teacher ID!' }]}
-      >
-        <Input />
+        <Input placeholder="Number of CLOs" />
       </Form.Item>
 
+      <Form.List name="CLOs">
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                <Form.Item
+                 {...restField}
+                 name={[name, 'cloId']}
+                 fieldKey={[fieldKey, 'cloId']}
+                 rules={[{ required: true, message: 'Please input the CLO ID!' }]}
+                >
+                 <Input placeholder="CLO ID" />
+                </Form.Item>
+                <Form.Item
+                 {...restField}
+                 name={[name, 'cloName']}
+                 fieldKey={[fieldKey, 'cloName']}
+                 rules={[{ required: true, message: 'Please input the CLO Name!' }]}
+                >
+                 <Input placeholder="CLO Name" />
+                </Form.Item>
+                <Form.Item
+                 {...restField}
+                 name={[name, 'cloNote']}
+                 fieldKey={[fieldKey, 'cloNote']}
+                >
+                 <Input placeholder="CLO Note" />
+                </Form.Item>
+                <MinusCircleOutlined onClick={() => remove(name)} />
+              </Space>
+            ))}
+            <Form.Item>
+              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />} disabled={form.getFieldValue('nofClos') <= fields.length}>
+                Add CLO
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
+
       <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
+    <Button type="primary" htmlType="submit">
+      Update Course
+    </Button>
+ </Form.Item>
+ <Form.Item>
+    <Button type="primary" onClick={() => navigate("/admin/course")}>
+      Cancel
+    </Button>
+ </Form.Item>
     </Form>
-  );
+ );
 };
 
 export default CourseEdit;
