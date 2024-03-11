@@ -15,6 +15,7 @@ export default function CourseTable({ dataListCourse = [] }) {
     return data.map((item) => ({
       key: item.id, // Sử dụng id của mỗi item làm key
       id: item.id,
+      nofClos: item.nofClos,
       courseId: item.courseInfo.courseId,
       courseName: item.courseInfo.courseName,
       semester: item.courseInfo.semester,
@@ -41,8 +42,8 @@ export default function CourseTable({ dataListCourse = [] }) {
    
     {
       title: "Nof. CLOs",
-      dataIndex: "nofCLOs",
-      key: "nofCLOs",
+      dataIndex: "nofClos",
+      key: "nofClos",
     },
    
     // Cột Thao tác không thay đổi

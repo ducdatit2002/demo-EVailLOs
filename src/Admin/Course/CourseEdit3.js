@@ -15,6 +15,7 @@ const CourseEdit = () => {
         courseInfo: data.courseInfo,
         CLOs: data.CLOs,
         questions: data.questions,
+        nofClos: data.nofClos
       });
     });
  }, [id, form]);

@@ -1,4 +1,4 @@
-import { https } from "./configURL1";
+import { https } from "./configURL";
 
 export const studentServ = {
   editStudent: (id, data) => {
