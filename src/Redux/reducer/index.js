@@ -1,9 +1,12 @@
 import { combineReducers } from "redux";
+import { userReducer } from "./reducerUser";
 import { courseReducer } from "./reducerCourse";
 import { spinerReducer } from "./reducerSpiner";
-import  examTeamsReducer  from "./reducerExamTeams";
+import { examteamsReducer } from "./reducerExamteam";
+
 export let rootReducer = combineReducers({
   courseReducer,
-  examTeamsReducer,
-  spinerReducer
+  examteamsReducer,
+  spinerReducer,
+  userReducer
 });

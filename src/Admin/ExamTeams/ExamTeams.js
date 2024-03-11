@@ -1,128 +1,87 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { Button, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import * as XLSX from "xlsx";
-import { importExamTeams } from "../../Redux/actions/actionCourse";
 import ExamTeamsTable from "./ExamTeamsTable";
+import { importExamTeams, setDataListExamteams } from "../../Redux/actions/actionExamteams";
+import * as XLSX from "xlsx";
 
 export default function ExamTeams() {
-  const [results, setResults] = useState(null);
-  const dispatch = useDispatch();
-  const examData = useSelector((state) => state.examData); // Replace with your actual data path
-
-  const handleFileUpload = (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const workbook = XLSX.read(e.target.result, { type: "binary" });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const excelData = XLSX.utils.sheet_to_json(worksheet);
-      dispatch(importExamTeams(excelData)); // Assuming you have an action that handles this
-    };
-    reader.readAsBinaryString(file);
-    return false; // Prevent default upload behavior
-  };
-
-  const beforeUpload = (file) => {
-    const isExcel = [
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "application/vnd.ms-excel",
-    ].includes(file.type);
-    if (!isExcel) {
-      message.error(`${file.name} is not an excel file.`);
-    }
-    return isExcel || Upload.LIST_IGNORE;
-  };
-
-  const calculateResults = () => {
-    if (!examData || !Array.isArray(examData)) {
-      message.error("Exam data is not loaded or in an unexpected format.");
-      return;
-    }
-
-    // Filter out absent students before calculations
-    const filteredData = examData.filter(
-      (student) => student.note !== "ABSENT"
-    );
-    const numStudents = filteredData.length;
-    let cloTotals = { CLO1: 0, CLO2: 0, CLO3: 0 };
-    let cloCounts = { CLO1: 0, CLO2: 0, CLO3: 0 };
-
-    filteredData.forEach((student) => {
-      Object.entries(student).forEach(([key, value]) => {
-        if (key.startsWith("mcq_") || key.startsWith("wq_")) {
-          if (value > 0) {
-            const cloMapping = {
-              mcq_q1: ["CLO1", "CLO2", "CLO3"],
-              mcq_q2: ["CLO1"],
-              mcq_q3: ["CLO1", "CLO2"],
-              mcq_q4: ["CLO1"],
-              mcq_q5: ["CLO1"],
-              wq_q1: ["CLO1"],
-              wq_q2: ["CLO1"],
-            };
-
-            cloMapping[key]?.forEach((clo) => {
-              cloTotals[clo] += value;
-              cloCounts[clo] += 1;
-            });
+    const dispatch = useDispatch();
+    
+    useEffect(() => {
+        dispatch(setDataListExamteams());
+    }, [dispatch]);
+    
+    const handleFileUpload = (file) => {
+      const reader = new FileReader();
+    
+      reader.onload = async (e) => {
+        try {
+          const workbook = XLSX.read(e.target.result, { type: 'binary' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const excelData = XLSX.utils.sheet_to_json(worksheet);
+    
+          const formattedData = excelData.map(item => ({
+            // Your existing mapping
+            courseID: item["Course ID"],
+            courseName: item["Course Name"],
+            courseGroup: item["Course Group"],
+            examTeams: item["Exam Team"],
+            numberOfStudent: item["Number of Student"],
+            examDate: item["Exam Date"],
+            examTime: item["Exam Time"],
+            examRoom: item["Exam Room"],
+            examType: item["Exam Type"],
+            lecturer: item["Lecturer"],
+            // Add any additional fields here
+          }));
+    
+          // Sequentially dispatch actions for each course
+          for (const course of formattedData) {
+            await dispatch(importExamTeams(course));
           }
+    
+          // After all courses are imported, update the exam teams list
+          dispatch(setDataListExamteams());
+    
+        } catch (error) {
+          console.error("Error reading the Excel file: ", error);
+          message.error("There was an issue processing the Excel file.");
         }
-      });
-    });
+      };
+    
+      reader.onerror = (error) => {
+        console.error("Error reading the Excel file: ", error);
+        message.error("There was an issue reading the Excel file.");
+      };
+    
+      reader.readAsBinaryString(file);
+      return false; // Prevent default upload behavior
+    };
+    
+  
 
-    let cloAverages = {};
-    for (const clo in cloTotals) {
-      cloAverages[clo] =
-        cloCounts[clo] > 0 ? cloTotals[clo] / cloCounts[clo] : 0;
-    }
+    const beforeUpload = (file) => {
+        const isExcel = file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.type === "application/vnd.ms-excel";
+        if (!isExcel) {
+            message.error(`${file.name} is not an excel file.`);
+        }
+        return isExcel || Upload.LIST_IGNORE;
+    };
 
-    let percentPassCLO = {};
-    for (const clo in cloAverages) {
-      percentPassCLO[clo] = (cloAverages[clo] / numStudents) * 100;
-    }
-
-    setResults({ cloAverages, percentPassCLO });
-  };
-  return (
-    <div className="container mx-auto">
-      <h1 className="text-2xl">Exam Teams</h1>
-      <Upload
-        beforeUpload={beforeUpload}
-        customRequest={({ file }) => handleFileUpload(file)}
-        showUploadList={false}
-      >
-        <Button icon={<UploadOutlined />}>Import from Excel</Button>
-      </Upload>
-      <ExamTeamsTable />
-      <Button type="primary" onClick={calculateResults}>
-        Calculate Results
-      </Button>
-      {/* Results display */}
-      {results && (
-        <div>
-          <h2>Results:</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>CLO ID</th>
-                <th>Average Score</th>
-                <th>% Pass</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(results.cloAverages).map(([cloId, average]) => (
-                <tr key={cloId}>
-                  <td>{cloId}</td>
-                  <td>{average.toFixed(2)}</td>
-                  <td>{results.percentPassCLO[cloId].toFixed(2)}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    return (
+        <div className="container mx-auto">
+            <h1 className="text-2xl">Exam Teams</h1>
+            <Upload
+                beforeUpload={beforeUpload}
+                customRequest={({ file }) => handleFileUpload(file)}
+                showUploadList={false}
+            >
+                <Button icon={<UploadOutlined />}>Import from Excel</Button>
+            </Upload>
+            <ExamTeamsTable />
         </div>
-      )}
-    </div>
-  );
+    );
 }

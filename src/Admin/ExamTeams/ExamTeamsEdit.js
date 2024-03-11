@@ -1,217 +1,200 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, Input, Button, message, Space, Select } from "antd";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { courseServ } from "../../Services/courseService";
+import { Form, Input, Button, message, Modal, Row, Col } from "antd";
+import { examteamsServ } from "../../Services/examteamsService";
 
-const { Option } = Select;
-
-const CourseEdit = () => {
-  let { id } = useParams();
+const ExamTeamsEdit = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [cloCount, setCloCount] = useState(0);
-  const [clos, setClos] = useState([]);
+  const [maxScoreForm] = Form.useForm();
+  const [maxScoreModalVisible, setMaxScoreModalVisible] = useState(false);
 
   useEffect(() => {
-    courseServ.getCourse(id).then((data) => {
-      form.setFieldsValue({
-        courseInfo: data.courseInfo,
-        CLOs: data.CLOs,
-        questions: data.questions,
+    examteamsServ.getExamteams(id).then((data) => {
+      form.setFieldsValue(data);
+      maxScoreForm.setFieldsValue({
+        maxScore: data.maxScore ? data.maxScore[0] : {},
       });
-      setClos(data.CLOs); // Cập nhật state ở đây
-      setCloCount(data.CLOs.length);
     });
-  }, [id, form]);
+  }, [id, form, maxScoreForm]);
 
-  const updateCLOs = async () => {
-    const values = await form.validateFields(["CLOs"]); // Chỉ validate và lấy dữ liệu từ phần CLOs
-    console.log("Updating CLOs with", values.CLOs);
-    // Gọi API cập nhật CLOs tại đây
-    // Không cần navigate sau khi cập nhật
-  };
-
-  const updateQuestions = async () => {
-    const values = await form.validateFields(["questions"]); // Chỉ validate và lấy dữ liệu từ phần questions
-    console.log("Updating Questions with", values.questions);
-    // Gọi API cập nhật questions tại đây
-    // Không cần navigate sau khi cập nhật
+  const onMaxScoreFinish = async (values) => {
+    try {
+      // Assuming editExamteams API can handle partial updates
+      await examteamsServ.editExamteams(id, { maxScore: [values.maxScore] });
+      message.success("Max score updated successfully");
+      setMaxScoreModalVisible(false);
+    } catch (err) {
+      message.error("Failed to update max score");
+      console.error(err);
+    }
   };
 
   const onFinish = async (values) => {
     try {
-      await courseServ.editCourse(id, values);
-      message.success("Course updated successfully");
-      navigate("/admin/course");
+      await examteamsServ.editExamteams(id, values);
+      message.success("Exam team updated successfully");
+      navigate("/admin/examteams");
     } catch (err) {
-      message.error("Failed to update course");
+      message.error("Failed to update exam team");
       console.error(err);
     }
   };
 
   return (
-    <Form
-      form={form}
-      onFinish={onFinish}
-      layout="vertical"
-      name="editCourseForm"
-      initialValues={{ CLOs: [] }}
-    >
-      <h2>Nhập CLOs</h2>
-      <Form.List name="CLOs">
-        {(fields, { add, remove }) => (
-          <>
-            {fields.map((field) => (
-              <Space
-                key={field.key}
-                style={{ display: "flex", marginBottom: 8 }}
-                align="baseline"
-              >
-                <Form.Item
-                  {...field}
-                  name={[field.name, "cloId"]}
-                  fieldKey={[field.fieldKey, "cloId"]}
-                  rules={[{ required: true, message: "Please input CLO ID" }]}
-                >
-                  <Input placeholder="CLO ID" />
-                </Form.Item>
-                <Form.Item
-                  {...field}
-                  name={[field.name, "cloName"]}
-                  fieldKey={[field.fieldKey, "cloName"]}
-                  rules={[{ required: true, message: "Please input CLO name" }]}
-                >
-                  <Input placeholder="CLO Name" />
-                </Form.Item>
-                <Form.Item
-                  {...field}
-                  name={[field.name, "cloNote"]}
-                  fieldKey={[field.fieldKey, "cloNote"]}
-                >
-                  <Input placeholder="CLO Note" />
-                </Form.Item>
-                <MinusCircleOutlined
-                  onClick={() => {
-                    remove(field.name);
-                    setCloCount(cloCount - 1);
-                  }}
-                />
-              </Space>
-            ))}
-            <Form.Item>
-              <Button
-                type="dashed"
-                onClick={() => add({ cloId: 0 })} // Thêm CLO mới với cloId mặc định là 0
-                block
-                icon={<PlusOutlined />}
-              >
-                Add CLO
-              </Button>
+    <div>
+      <Form
+        form={form}
+        onFinish={onFinish}
+        layout="vertical"
+        name="editExamTeamForm"
+      >
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Update Exam Team
+          </Button>
+        </Form.Item>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              name="courseID"
+              label="Course ID"
+              rules={[{ required: true }]}
+            >
+              <Input />
             </Form.Item>
-          </>
-        )}
-      </Form.List>
-
-      {/* <Form.Item>
-        <Button type="primary" onClick={updateCLOs}>
-          Update CLOs
-        </Button>
-      </Form.Item> */}
-
-      {/* <h2>Nhập Questions</h2> */}
-      {/* <Form.List name="questions">
-        {(fields, { add, remove }) => (
-          <>
-            {fields.map(({ key, name, fieldKey, ...restField }) => (
-              <Space
-                key={key}
-                style={{ display: "flex", marginBottom: 8 }}
-                align="baseline"
-              >
-                <Form.Item
-                  {...restField}
-                  name={[name, "questionsId"]}
-                  fieldKey={[fieldKey, "questionsId"]}
-                  rules={[
-                    { required: true, message: "Please input Question ID" },
-                  ]}
-                >
-                  <Input placeholder="Question ID" />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, "questionsName"]}
-                  fieldKey={[fieldKey, "questionsName"]}
-                  rules={[
-                    { required: true, message: "Please input Question Name" },
-                  ]}
-                >
-                  <Input placeholder="Question Name" />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, "questionsNote"]}
-                  fieldKey={[fieldKey, "questionsNote"]}
-                >
-                  <Input placeholder="Question Note" />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, "maxScore"]}
-                  fieldKey={[fieldKey, "maxScore"]}
-                  rules={[
-                    { required: true, message: "Please input Max Score" },
-                  ]}
-                >
-                  <Input placeholder="Max Score" />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, "cloName"]}
-                  fieldKey={[fieldKey, "cloName"]}
-                  rules={[
-                    { required: true, message: "Please select a CLO Name" },
-                  ]}
-                >
-                  <Select placeholder="Select a CLO">
-                    {clos.map((clo, index) => (
-                      <Select.Option key={index} value={clo.cloName}>
-                        {clo.cloName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-
-                <MinusCircleOutlined onClick={() => remove(name)} />
-              </Space>
-            ))}
-            <Form.Item>
-              <Button
-                type="dashed"
-                onClick={() => add()}
-                block
-                icon={<PlusOutlined />}
-              >
-                Add Question
-              </Button>
+            <Form.Item
+              name="courseName"
+              label="Course Name"
+              rules={[{ required: true }]}
+            >
+              <Input />
             </Form.Item>
-          </>
-        )}
-      </Form.List> */}
-{/* 
-      <Form.Item>
-        <Button type="primary" onClick={updateQuestions}>
-          Update Questions
+            <Form.Item
+              name="courseGroup"
+              label="Course Group"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="examTeams"
+              label="Exam Teams"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="numberOfStudent"
+              label="Number of Student"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="examDate"
+              label="Exam Date"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="examTime"
+              label="Exam Time"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="examRoom"
+              label="Exam Room"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="examType"
+              label="Exam Type"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="lecturer"
+              label="Lecturer"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Button
+          style={{
+            backgroundColor: "#4CAF50",
+            color: "white",
+            borderColor: "#4CAF50",
+          }}
+          type="primary"
+          onClick={() => setMaxScoreModalVisible(true)}
+        >
+          Edit Max Score
         </Button>
-      </Form.Item> */}
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Update Course
-        </Button>
-      </Form.Item>
-    </Form>
+      </Form>
+
+      <Modal
+        title="Edit Max Score"
+        visible={maxScoreModalVisible}
+        onCancel={() => setMaxScoreModalVisible(false)}
+        footer={null}
+      >
+        <Form
+          form={maxScoreForm}
+          onFinish={onMaxScoreFinish}
+          layout="vertical"
+          name="maxScoreForm"
+        >
+          {/* Define your MaxScore inputs here, similar to how they're defined in the main form */}
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name={["maxScore", "mcq_q1"]} label="MCQ-Q1">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "mcq_q2"]} label="MCQ-Q2">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "mcq_q3"]} label="MCQ-Q3">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "mcq_q4"]} label="MCQ-Q4">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "mcq_q5"]} label="MCQ-Q5">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name={["maxScore", "wq_q1"]} label="wq_q1">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "wq_q2"]} label="wq_q2">
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+          {/* Repeat for other maxScore fields */}
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Save Max Score
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
   );
 };
 
-export default CourseEdit;
+export default ExamTeamsEdit;

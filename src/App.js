@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "antd/dist/antd.min.css";
 import Admin from "./Admin/Admin";
 import Spiner from "./Components/Spiner/Spiner";
@@ -7,9 +7,21 @@ import CourseEdit from "./Admin/Course/CourseEdit";
 import CourseEdit3 from "./Admin/Course/CourseEdit3";
 import ExamTeams from "./Admin/ExamTeams/ExamTeams";
 import ExamTeamsEdit from "./Admin/ExamTeams/ExamTeamsEdit";
+import ExamTeamsScore from "./Admin/ExamTeams/ExamTeamsScore";
+import User from "./Admin/User/User";
+import UserEdit from "./Admin/User/UserEdit";
+import UserAddNew from "./Admin/User/UserAddNew";
 import Students from "./Admin/Students/Students";
 import AlwaysTop from "./Components/ScrollTop/AlwaysTop";
 import AnswerStructureEdit from "./Admin/AnswerStructure/AnswerStructureEdit";
+import LoginPage from "./LoginPage/LoginPage";
+
+// Hàm kiểm tra xem người dùng đã đăng nhập hay chưa
+const isAuthenticated = () => {
+  const userInfo = sessionStorage.getItem("USER_INFO");
+  return !!userInfo;
+};
+
 function App() {
   return (
     <div className="">
@@ -17,44 +29,128 @@ function App() {
       <BrowserRouter>
         <AlwaysTop />
         <Routes>
-          <Route path="/" element={<Admin Component={Course} />} />
-          <Route path="/admin" exact element={<Admin Component={Course} />} />
+          <Route path="/" element={<LoginPage />} />
+          <Route
+            path="/admin"
+            element={
+              isAuthenticated() ? (
+                <Admin Component={Course} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            path="/admin/user"
+            element={
+              isAuthenticated() ? (
+                <Admin Component={User} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            path="/admin/user/edit/:id"
+            element={
+              isAuthenticated() ? (
+                <Admin Component={UserEdit} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            path="/admin/user/addnew"
+            element={
+              isAuthenticated() ? (
+                <Admin Component={UserAddNew} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
           <Route
             path="/admin/course"
-            exact
-            element={<Admin Component={Course} />}
+            element={
+              isAuthenticated() ? (
+                <Admin Component={Course} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
           <Route
             path="/admin/course/edit/:id"
-            exact
-            element={<Admin Component={CourseEdit} />}
+            element={
+              isAuthenticated() ? (
+                <Admin Component={CourseEdit} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
-         
           <Route
             path="/admin/course/edit3/:id"
-            exact
-            element={<Admin Component={CourseEdit3} />}
+            element={
+              isAuthenticated() ? (
+                <Admin Component={CourseEdit3} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
           <Route
             path="/admin/examteams"
-            exact
-            element={<Admin Component={ExamTeams} />}
+            element={
+              isAuthenticated() ? (
+                <Admin Component={ExamTeams} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
           <Route
             path="/admin/examteams/edit/:id"
-            exact
-            element={<Admin Component={ExamTeamsEdit} />}
+            element={
+              isAuthenticated() ? (
+                <Admin Component={ExamTeamsEdit} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            path="/admin/examteams/examteamsscore/:id"
+            element={
+              isAuthenticated() ? (
+                <Admin Component={ExamTeamsScore} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
           <Route
             path="/admin/students"
-            exact
-            element={<Admin Component={Students} />}
+            element={
+              isAuthenticated() ? (
+                <Admin Component={Students} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
-           <Route
+          <Route
             path="/admin/answerStructure/:id"
-            exact
-            element={<Admin Component={AnswerStructureEdit} />}
+            element={
+              isAuthenticated() ? (
+                <Admin Component={AnswerStructureEdit} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
+          {/* Thêm các Route khác nếu cần */}
         </Routes>
       </BrowserRouter>
     </div>
