@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import {
-  UserOutlined
+  UserOutlined,
+  SolutionOutlined,
+  FolderOpenOutlined,
+  TeamOutlined
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import { NavLink } from "react-router-dom";
@@ -14,9 +17,9 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem(<NavLink to="/admin/course">Course</NavLink>, "sub1", <UserOutlined />),
-  getItem(<NavLink to="/admin/examteams">Exam Teams</NavLink>, "sub2", <UserOutlined />),
-  getItem(<NavLink to="/admin/students">Students</NavLink>, "sub3", <UserOutlined />),
+  getItem(<NavLink to="/admin/course">Course</NavLink>, "sub1", <FolderOpenOutlined />),
+  getItem(<NavLink to="/admin/examteams">Exam Teams</NavLink>, "sub2", <SolutionOutlined />),
+  getItem(<NavLink to="/admin/students">Students</NavLink>, "sub3", <TeamOutlined />),
   getItem(<NavLink to="/admin/user">Users</NavLink>, "sub4", <UserOutlined />),
 ];
 export default function Admin({ Component }) {
