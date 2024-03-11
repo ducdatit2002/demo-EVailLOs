@@ -9,7 +9,8 @@ const CourseEdit = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [cloCount, setCloCount] = useState(0);
-  const [clos, setClos] = useState([]);
+  const [setClos] = useState([]);
+  //const [clos, setClos] = useState([]);
 
   useEffect(() => {
     courseServ.getCourse(id).then((data) => {
@@ -21,7 +22,7 @@ const CourseEdit = () => {
       setClos(data.CLOs); // Cập nhật state ở đây
       setCloCount(data.CLOs.length);
     });
-  }, [id, form]);
+  });
 
 
   const onFinish = async (values) => {

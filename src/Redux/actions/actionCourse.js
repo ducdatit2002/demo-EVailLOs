@@ -1,12 +1,6 @@
-import { SET_DATA_COURSE, SET_COURSE } from "../constant/constantCourse";
+import { SET_DATA_COURSE } from "../constant/constantCourse";
 import { courseServ } from "../../Services/courseService";
 
-// const setCourseSuccess = (successValue) => {
-//   return {
-//     type: SET_COURSE,
-//     payload: successValue,
-//   };
-// };
 
 const setDataListCourseSuccess = (successValue) => {
   return {

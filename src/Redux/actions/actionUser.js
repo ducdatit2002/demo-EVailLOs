@@ -1,13 +1,7 @@
-import { SET_DATA_USER, SET_USER } from "../constant/constantUser";
+import { SET_DATA_USER } from "../constant/constantUser";
 import { userServ } from "../../Services/userService";
 
 
-const setUserSuccess = (successValue) => {
-  return {
-    type: SET_USER,
-    payload: successValue,
-  };
-};
 
 const setDataListUserSuccess = (users) => {
   return {

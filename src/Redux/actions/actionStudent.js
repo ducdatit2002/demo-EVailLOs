@@ -1,12 +1,6 @@
-import { SET_DATA_STUDENT, SET_STUDENT } from "../constant/constantStudent.js";
+import { SET_DATA_STUDENT } from "../constant/constantStudent.js";
 import { studentServ } from "../../Services/studentService.js";
 
-// const setStudentSuccess = (successValue) => {
-//   return {
-//     type: SET_Student,
-//     payload: successValue,
-//   };
-// };
 
 const setDataListStudentSuccess = (successValue) => {
   return {

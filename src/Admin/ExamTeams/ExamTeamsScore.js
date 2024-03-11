@@ -3,9 +3,8 @@ import { useDispatch } from 'react-redux';
 import { Button, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import ExamTeamsScoreTable from './ExamTeamsScoreTable';
-import { importExamTeamsScores, setDataListExamteams } from '../../Redux/actions/actionExamteams';
+import { setDataListExamteams } from '../../Redux/actions/actionExamteams';
 import * as XLSX from 'xlsx';
-import { examteamsServ } from '../../Services/examteamsService';
 export default function ExamTeamsScore() {
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState([]);

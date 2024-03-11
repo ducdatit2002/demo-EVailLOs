@@ -1,6 +1,5 @@
 import React from 'react';
 import { message, Popconfirm, Table } from "antd";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { studentServ } from "../../Services/studentService";
 import { setDataListStudent } from "../../Redux/actions/actionStudent";
@@ -8,7 +7,7 @@ import { setDataListStudent } from "../../Redux/actions/actionStudent";
 
 export default function StudentTable({dataListStudent = []}){
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   
   // Chuyển đổi dữ liệu dựa trên cấu trúc dữ liệu thực tế
   function transformData(data) {

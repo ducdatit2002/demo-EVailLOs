@@ -1,89 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Form,
-  Input,
-  Button,
-  message,
-  Modal,
-  Row,
-  Col,
-  InputNumber,
-} from "antd";
+import { Form, Input, Button, message, Modal, Row, Col } from "antd";
 import { examteamsServ } from "../../Services/examteamsService";
 
 const ExamTeamsEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [examStructureForm] = Form.useForm();
-  const [examStructureModalVisible, setExamStructureModalVisible] =
-    useState(false);
-  const [examStructure, setExamStructure] = useState({
-    NoofQuestion: 0,
-    tieuchi: [],
-  });
+  const [maxScoreForm] = Form.useForm();
+  const [maxScoreModalVisible, setMaxScoreModalVisible] = useState(false);
 
   useEffect(() => {
     examteamsServ.getExamteams(id).then((data) => {
       form.setFieldsValue(data);
-      setExamStructure(data.examStructure || { NoofQuestion: 0, tieuchi: [] });
-    });
-  }, [id, form]);
-
-  const onExamStructureFinish = async (values) => {
-    try {
-      await examteamsServ.editExamteams(id, {
-        examStructure: values.examStructure,
+      maxScoreForm.setFieldsValue({
+        maxScore: data.maxScore ? data.maxScore[0] : {},
       });
-      message.success("Exam structure updated successfully");
-      setExamStructureModalVisible(false);
+    });
+  }, [id, form, maxScoreForm]);
+
+  const onMaxScoreFinish = async (values) => {
+    try {
+      // Assuming editExamteams API can handle partial updates
+      await examteamsServ.editExamteams(id, { maxScore: [values.maxScore] });
+      message.success("Max score updated successfully");
+      setMaxScoreModalVisible(false);
     } catch (err) {
-      message.error("Failed to update exam structure");
+      message.error("Failed to update max score");
       console.error(err);
     }
   };
 
-  const renderTieuchiInputs = () => {
-    let inputs = [];
-    for (let i = 0; i < examStructure.NoofQuestion; i++) {
-      inputs.push(
-        <Row key={i} gutter={16}>
-          <Col span={8}>
-            <Form.Item
-              name={["examStructure", "tieuchi", i, "id"]}
-              label={`ID ${i + 1}`}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              name={["examStructure", "tieuchi", i, "name"]}
-              label={`Name ${i + 1}`}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              name={["examStructure", "tieuchi", i, "note"]}
-              label={`Note ${i + 1}`}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-        </Row>
-      );
+  const onFinish = async (values) => {
+    try {
+      await examteamsServ.editExamteams(id, values);
+      message.success("Exam team updated successfully");
+      navigate("/admin/examteams");
+    } catch (err) {
+      message.error("Failed to update exam team");
+      console.error(err);
     }
-    return inputs;
   };
 
   return (
     <div>
       <Form
         form={form}
-        onFinish={() => {}}
+        onFinish={onFinish}
         layout="vertical"
         name="editExamTeamForm"
       >
@@ -175,43 +138,57 @@ const ExamTeamsEdit = () => {
             borderColor: "#4CAF50",
           }}
           type="primary"
-          onClick={() => setExamStructureModalVisible(true)}
+          onClick={() => setMaxScoreModalVisible(true)}
         >
-          Edit Exam Structure
+          Edit Answer Structure
         </Button>
       </Form>
 
       <Modal
-        title="Edit Exam Structure"
-        visible={examStructureModalVisible}
-        onCancel={() => setExamStructureModalVisible(false)}
+        title="Edit Max Score"
+        visible={maxScoreModalVisible}
+        onCancel={() => setMaxScoreModalVisible(false)}
         footer={null}
       >
         <Form
-          form={examStructureForm}
-          onFinish={onExamStructureFinish}
+          form={maxScoreForm}
+          onFinish={onMaxScoreFinish}
           layout="vertical"
-          name="examStructureForm"
-          initialValues={{ examStructure: examStructure }}
+          name="maxScoreForm"
         >
-          <Form.Item
-            name={["examStructure", "NoofQuestion"]}
-            label="Number of Questions"
-          >
-            <InputNumber
-              min={0}
-              max={20}
-              onChange={(value) =>
-                setExamStructure({ ...examStructure, NoofQuestion: value })
-              }
-            />
-          </Form.Item>
-
-          {renderTieuchiInputs()}
+          {/* Define your MaxScore inputs here, similar to how they're defined in the main form */}
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name={["maxScore", "mcq_q1"]} label="MCQ-Q1">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "mcq_q2"]} label="MCQ-Q2">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "mcq_q3"]} label="MCQ-Q3">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "mcq_q4"]} label="MCQ-Q4">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "mcq_q5"]} label="MCQ-Q5">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name={["maxScore", "wq_q1"]} label="wq_q1">
+                <Input />
+              </Form.Item>
+              <Form.Item name={["maxScore", "wq_q2"]} label="wq_q2">
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+          {/* Repeat for other maxScore fields */}
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Save Exam Structure
+              Save Max Score
             </Button>
           </Form.Item>
         </Form>
