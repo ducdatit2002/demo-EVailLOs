@@ -52,15 +52,15 @@ const ExamTeamsEdit = () => {
           <Col span={8}>
             <Form.Item
               name={["examStructure", "tieuchi", i, "id"]}
-              label={`ID ${i + 1}`}
+              label={`Tiêu chí ${i + 1} (CLOs)`}
             >
               <Input />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
-              name={["examStructure", "tieuchi", i, "name"]}
-              label={`Name ${i + 1}`}
+              name={["examStructure", "tieuchi", i, "maxScore"]}
+              label={`Max Score`}
             >
               <Input />
             </Form.Item>
@@ -68,7 +68,7 @@ const ExamTeamsEdit = () => {
           <Col span={8}>
             <Form.Item
               name={["examStructure", "tieuchi", i, "note"]}
-              label={`Note ${i + 1}`}
+              label={`Note`}
             >
               <Input />
             </Form.Item>
