@@ -9,28 +9,30 @@ import { setDataListStudent } from "../../Redux/actions/actionStudent";
 export default function StudentTable({dataListStudent = []}){
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const transformedData = transformData(dataListStudent);
-
+  
+  // Chuyển đổi dữ liệu dựa trên cấu trúc dữ liệu thực tế
   function transformData(data) {
     return data.map((item) => ({
-       key: item.studentInfo.studentId, // Assuming studentId is unique and can be used as a key
-       no: item.studentInfo.No,
-       studentId: item.studentInfo.studentId,
-       studentName: item.studentInfo.studentName,
-       classId: item.studentInfo.classId,
-       violation: item.studentInfo.violation,
-       note: item.studentInfo.note,
+       key: item.studentId, // Sử dụng studentId làm key
+       id: item.id,
+       studentId: item.studentId,
+       studentFirstName: item.studentFirstName,
+       studentLastName: item.studentLastName,
+       classId: item.classId,
+       courseName: item.courseName,
+       courseGroups: item.courseGroups,
+       violation: item.violation,
+       note: item.note,
     }));
-   }
-   
+  }
 
-console.log(dataListStudent);
-  // Các cột của bảng
+  // Gọi hàm chuyển đổi dữ liệu
+  const transformedData = transformData(dataListStudent);
   const columns = [
     {
       title: 'No',
-      dataIndex: 'no',
-      key: 'no',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
       title: 'Student ID',
@@ -38,14 +40,29 @@ console.log(dataListStudent);
       key: 'studentId',
     },
     {
-      title: 'Student Name',
-      dataIndex: 'studentName',
-      key: 'studentName',
+      title: 'Student First Name',
+      dataIndex: 'studentFirstName',
+      key: 'studentFirstName',
+    },
+    {
+      title: 'Student Last Name',
+      dataIndex: 'studentLastName',
+      key: 'studentLastName',
     },
     {
       title: 'Class',
       dataIndex: 'classId',
       key: 'classId',
+    },
+    {
+      title: 'Course Name',
+      dataIndex: 'courseGroups',
+      key: 'courseGroups',
+    },
+    {
+      title: 'Course Group',
+      dataIndex: 'courseName',
+      key: 'courseName',
     },
     {
       title: 'Violation',
@@ -87,12 +104,12 @@ console.log(dataListStudent);
           >
             <span className="hover:cursor-pointer text-red-500">Xóa</span>
           </Popconfirm>
-          <span
+          {/* <span
             className="hover:cursor-pointer text-purple-500"
             onClick={() => navigate(`/admin/student/studentEdit/${record.id}`)}
           >
             Sửa
-          </span>
+          </span> */}
         </div>
       ),
     },

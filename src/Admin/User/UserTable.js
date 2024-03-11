@@ -30,7 +30,7 @@ export default function UserTable({ dataListUser }) {
       key: "role",
       render: (text) => {
         // Giả sử role có giá trị là "role 1" cho ADMIN và các role khác cho USER
-        if (text === "role 1") {
+        if (text === "ADMIN") {
           return <Tag color="red">ADMIN</Tag>;
         } else {
           return <Tag color="green">TEACHER</Tag>;

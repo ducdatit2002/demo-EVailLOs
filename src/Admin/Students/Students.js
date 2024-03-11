@@ -16,7 +16,7 @@ const { Option } = Select;
 export default function Student() {
   const [semester, setSemester] = useState("");
   const [schoolYear, setSchoolYear] = useState("");
-  const { dataListStudent } = useSelector((state) => state.courseReducer);
+  const { dataListStudent } = useSelector((state) => state.studentReducer);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -36,23 +36,26 @@ export default function Student() {
       const worksheet = workbook.Sheets[sheetName];
       const excelData = XLSX.utils.sheet_to_json(worksheet);
   
-       // Map the Excel data to your API structure
-       const formattedData = excelData.map((item) => ({
-        studentInfo: {
-          No: item.No,
-          studentId: item.studentId,
-          studentName: item.studentName,
-          classId: item.classId,
-          violation: item.violation,
-          note: item.note
-        },
-  
+      // Map the Excel data to your API structure
+      // Giả sử rằng API chỉ cần mảng của sinh viên và không cần 'studentInfo' wrapper.
+      const formattedData = excelData.map((item) => ({
+        id: item['No'],
+        studentId: item['Student ID'],
+        studentFirstName: item['Student first name'],
+        studentLastName: item['Student last name'],
+        classId: item['Course Name'], // Ví dụ: API có thể gọi là 'courseId' thay vì 'classId'
+        courseGroups: item['Course Group'], // Đảm bảo tên trường này khớp với API
+        courseName: item['Course Name'], // Đảm bảo tên trường này khớp với API
+        violation: item['Violation'],
+        note: item['Note']
       }));
+  
       dispatch(importStudents(formattedData));
     };
     reader.readAsBinaryString(file);
     return false; // Prevent upload
   };
+  
     
   
   const beforeUpload = (file) => {
