@@ -8,6 +8,7 @@ import {
   Modal,
   Row,
   Col,
+  Alert,
   InputNumber,
 } from "antd";
 import { examteamsServ } from "../../Services/examteamsService";
@@ -21,8 +22,11 @@ const ExamTeamsEdit = () => {
     useState(false);
   const [examStructure, setExamStructure] = useState({
     NoofQuestion: 0,
+    TotalScore:0,
     tieuchi: [],
   });
+  const [warning, setWarning] = useState(false);
+
 
   useEffect(() => {
     examteamsServ.getExamteams(id).then((data) => {
@@ -30,8 +34,16 @@ const ExamTeamsEdit = () => {
       setExamStructure(data.examStructure || { NoofQuestion: 0, tieuchi: [] });
     });
   }, [id, form]);
+  
+  useEffect(() => {
+    const maxScores = examStructure.tieuchi.map((item) => item.maxScore);
+    const totalScore = examStructure.TotalScore;
+    const sumOfMaxScores = maxScores.reduce((sum, score) => sum + score, 0);
+    setWarning(sumOfMaxScores > totalScore);
+  }, [examStructure]);
 
   const onExamStructureFinish = async (values) => {
+
     try {
       await examteamsServ.editExamteams(id, {
         examStructure: values.examStructure,
@@ -52,7 +64,7 @@ const ExamTeamsEdit = () => {
           <Col span={8}>
             <Form.Item
               name={["examStructure", "tieuchi", i, "id"]}
-              label={`Tiêu chí ${i + 1} (CLOs)`}
+              label={`Câu/Tiêu chí ${i + 1} (CLOs)`}
             >
               <Input />
             </Form.Item>
@@ -206,6 +218,18 @@ const ExamTeamsEdit = () => {
               }
             />
           </Form.Item>
+          <Form.Item
+            name={["examStructure", "TotalScore"]}
+            label="Total Score"
+          >
+            <InputNumber
+              min={0}
+              max={20}
+              onChange={(value) =>
+                setExamStructure({ ...examStructure, TotalScore: value })
+              }
+            />
+          </Form.Item>
 
           {renderTieuchiInputs()}
 
@@ -216,6 +240,16 @@ const ExamTeamsEdit = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      {warning && (
+        <Alert
+          message="Warning"
+          description="The sum of all max scores is greater than the total score."
+          type="warning"
+          showIcon
+          closable
+        />
+      )}
     </div>
   );
 };
