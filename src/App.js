@@ -150,7 +150,6 @@ function App() {
               )
             }
           />
-          {/* Thêm các Route khác nếu cần */}
         </Routes>
       </BrowserRouter>
     </div>

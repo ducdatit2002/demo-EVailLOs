@@ -16,7 +16,7 @@ export default function LoginPage() {
     if (userInfo) {
       const { username } = JSON.parse(userInfo);
       if (username === correctUsername) {
-        navigate('/admin/observer'); 
+        navigate('/admin/course'); 
       }
     }
   }, [navigate]);

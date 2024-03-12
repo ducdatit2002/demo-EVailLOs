@@ -3,11 +3,13 @@ import {
   UserOutlined,
   SolutionOutlined,
   FolderOpenOutlined,
-  TeamOutlined
+  TeamOutlined,
+  LogoutOutlined, // Import icon cho logout button
 } from "@ant-design/icons";
-import { Layout, Menu } from "antd";
-import { NavLink } from "react-router-dom";
+import { Layout, Menu, Button } from "antd"; // Import Button từ antd
+import { NavLink, useNavigate } from "react-router-dom"; // Sử dụng useNavigate để chuyển hướng
 const { Content, Sider } = Layout;
+
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -16,14 +18,24 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
+
 const items = [
   getItem(<NavLink to="/admin/course">Course</NavLink>, "sub1", <FolderOpenOutlined />),
   getItem(<NavLink to="/admin/examteams">Exam Teams</NavLink>, "sub2", <SolutionOutlined />),
   getItem(<NavLink to="/admin/students">Students</NavLink>, "sub3", <TeamOutlined />),
   getItem(<NavLink to="/admin/user">Users</NavLink>, "sub4", <UserOutlined />),
+  // Bạn có thể chèn nút logout ở đây hoặc thêm nó ngoài Menu
 ];
+
 export default function Admin({ Component }) {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate(); // Hook để chuyển hướng
+
+  // Hàm xử lý khi nhấn logout
+  const handleLogout = () => {
+    sessionStorage.clear(); // Xóa session storage
+    navigate("/"); // Chuyển hướng người dùng về trang login
+  };
 
   return (
     <div>
@@ -46,6 +58,14 @@ export default function Admin({ Component }) {
             mode="inline"
             items={items}
           />
+          <Button 
+            type="primary" 
+            icon={<LogoutOutlined />} 
+            onClick={handleLogout}
+            style={{ margin: '16px' }} // Thêm chút cách biệt cho nút logout
+          >
+            Logout
+          </Button>
         </Sider>
         <Layout className="site-layout">
           <Content
