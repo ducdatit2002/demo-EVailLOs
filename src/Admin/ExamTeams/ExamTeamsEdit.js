@@ -91,11 +91,23 @@ const ExamTeamsEdit = () => {
     return inputs;
   };
 
+  const onFinishMainForm = async (values) => {
+    try {
+      await examteamsServ.editExamteams(id, values);
+      message.success("Exam team updated successfully");
+      navigate("/admin/examteams");
+    } catch (error) {
+      message.error("Failed to update exam team");
+      console.error(error);
+    }
+  };
+
+
   return (
     <div>
       <Form
         form={form}
-        onFinish={() => {}}
+        onFinish={onFinishMainForm}
         layout="vertical"
         name="editExamTeamForm"
       >

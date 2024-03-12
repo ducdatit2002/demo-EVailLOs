@@ -32,18 +32,22 @@ export default function Course() {
       const worksheet = workbook.Sheets[sheetName];
       const excelData = XLSX.utils.sheet_to_json(worksheet);
   
-      // Map the Excel data to your API structure
       const formattedData = excelData.map((item) => ({
         courseInfo: {
-          courseId: item.courseId,
-          courseName: item.courseName,
-          semester: item.semester,
-          schoolYear: item.schoolYear,
-          teacherId: item.teacherId,
-          classId: item.classId,
+          courseId: item["Course ID"],
+          courseName: item["Course Name"],
         },
-
+        CLOs: [
+          { clo1: item["CLO1"], cloNote: item["CLO1_Note"] },
+          { clo2: item["CLO2"], cloNote: item["CLO2_Note"] },
+          { clo3: item["CLO3"], cloNote: item["CLO3_Note"] },
+          { clo4: item["CLO4"], cloNote: item["CLO4_Note"] },
+          { clo5: item["CLO5"], cloNote: item["CLO5_Note"] },
+          { clo6: item["CLO6"], cloNote: item["CLO6_Note"] },
+        ].filter(clo => clo.clo1 || clo.clo2 || clo.clo3 || clo.clo4 || clo.clo5 || clo.clo6), 
+        nofClos: item["CLOs"],
       }));
+      
 
       dispatch(importCourses(formattedData));
     };
