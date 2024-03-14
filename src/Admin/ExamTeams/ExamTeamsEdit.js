@@ -224,7 +224,7 @@ const ExamTeamsEdit = () => {
           >
             <InputNumber
               min={0}
-              max={20}
+              max={110}
               onChange={(value) =>
                 setExamStructure({ ...examStructure, TotalScore: value })
               }
