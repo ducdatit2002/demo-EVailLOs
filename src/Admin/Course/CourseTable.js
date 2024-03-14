@@ -18,16 +18,16 @@ export default function CourseTable({ dataListCourse = [] }) {
       nofClos: item.nofClos,
       courseId: item.courseInfo.courseId,
       courseName: item.courseInfo.courseName,
-      semester: item.courseInfo.semester,
-      schoolYear: item.courseInfo.schoolYear,
-      classId: item.courseInfo.classId,
-      teacherId: item.courseInfo.teacherId,
-      // Bạn có thể thêm các trường khác từ item nếu cần
     }));
   }
   
   console.log(dataListCourse);
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "Course ID",
       dataIndex: "courseId",
@@ -77,23 +77,11 @@ export default function CourseTable({ dataListCourse = [] }) {
             <span className="hover:cursor-pointer text-red-500">Xóa</span>
           </Popconfirm>
           <span
-            className="hover:cursor-pointer text-purple-500"
-            onClick={() => navigate(`/admin/course/edit3/${record.id}`)}
-          >
-            Sửa
-          </span>
-          <span
             className="hover:cursor-pointer text-blue-500"
             onClick={() => navigate(`/admin/course/edit/${record.id}`)}
           >
-            Nhập CLOs
+            Chỉnh sửa CLOs
           </span>
-         {/*  <span
-            className="hover:cursor-pointer text-green-500"
-            onClick={() => navigate(`/admin/answerStructure/${record.id}`)}
-          >
-            Nhập bảng điểm 
-          </span> */}
         </div>
       ),
     },

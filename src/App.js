@@ -4,7 +4,6 @@ import Admin from "./Admin/Admin";
 import Spiner from "./Components/Spiner/Spiner";
 import Course from "./Admin/Course/Course";
 import CourseEdit from "./Admin/Course/CourseEdit";
-import CourseEdit3 from "./Admin/Course/CourseEdit3";
 import ExamTeams from "./Admin/ExamTeams/ExamTeams";
 import ExamTeamsEdit from "./Admin/ExamTeams/ExamTeamsEdit";
 import ExamTeamsScore from "./Admin/ExamTeams/ExamTeamsScore";
@@ -91,16 +90,6 @@ function App() {
             }
           />
           <Route
-            path="/admin/course/edit3/:id"
-            element={
-              isAuthenticated() ? (
-                <Admin Component={CourseEdit3} />
-              ) : (
-                <Navigate to="/" />
-              )
-            }
-          />
-          <Route
             path="/admin/examteams"
             element={
               isAuthenticated() ? (
@@ -150,7 +139,6 @@ function App() {
               )
             }
           />
-          {/* Thêm các Route khác nếu cần */}
         </Routes>
       </BrowserRouter>
     </div>
