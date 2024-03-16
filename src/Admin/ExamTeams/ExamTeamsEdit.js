@@ -62,14 +62,6 @@ const ExamTeamsEdit = () => {
       inputs.push(
         <Row key={i} gutter={16}>
           <Col span={6}>
-          <Form.Item
-            name={["examStructure", "tieuchi", i, "questionName"]}
-            label={`Question Name ${i + 1}`}
-          >
-            <Input />
-          </Form.Item>
-          </Col>
-          <Col span={6}>
             <Form.Item
               name={["examStructure", "tieuchi", i, "id"]}
               label={`Câu/Tiêu chí ${i + 1} (CLOs)`}
