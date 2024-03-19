@@ -9,6 +9,56 @@ export default function ExamTeamsScore() {
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState([]);
 
+
+  const mockData = [
+    {
+       key: '1',
+       'No': '1',
+       'Student ID': 'S001',
+       'Student first name': 'John',
+       'Student last name': 'Doe',
+       'Total Score': 85,
+       'Note': 'Good performance',
+       absent: false, // This is now at the student level
+       questions: [
+         {
+           questionId: 'Q1',
+           score: 80,
+           clo: 'CLO1, CLO2',
+         },
+         {
+           questionId: 'Q2',
+           score: 85,
+           clo: 'CLO1',
+         },
+         // Add more questions as needed
+       ],
+    },
+    {
+       key: '2',
+       'Student ID': 'S002',
+       'Student first name': 'Jane',
+       'Student last name': 'Smith',
+       'Total Score': 90,
+       'Note': 'Excellent performance',
+       absent: true, // This is now at the student level
+       questions: [
+         {
+           questionId: 'Q1',
+           score: 85,
+           clo: 'CLO1, CLO2',
+         },
+         {
+           questionId: 'Q2',
+           score: 85,
+           clo: 'CLO1',
+         },
+         // Add more questions as needed
+       ],
+    },
+    // Add more students as needed
+   ];
+   
   useEffect(() => {
     dispatch(setDataListExamteams());
   }, [dispatch]);
@@ -43,6 +93,7 @@ export default function ExamTeamsScore() {
     }
     return true;
   };
+
 
 
   const handleSaveScores = () => {
@@ -117,7 +168,9 @@ export default function ExamTeamsScore() {
           </Button>
         </a>
       )}
-      <ExamTeamsScoreTable data={fileData} />
+      {/* <ExamTeamsScoreTable data={fileData} /> */}
+      { <ExamTeamsScoreTable initialData={mockData} /> }
+
     </div>
   );
 }
