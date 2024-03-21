@@ -1,31 +1,107 @@
-// ExamTeamsScoreTable.js
-import React from 'react';
-import { Table } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Form, Input, Button, InputNumber, Select, Checkbox, Space } from 'antd';
 
-const ExamTeamsScoreTable = ({ data }) => {
+const ExamTeamsScoreTable = ({ initialData }) => {
+  const [data, setData] = useState(initialData);
+  const [editingKey, setEditingKey] = useState('');
+  const [form] = Form.useForm();
+
   const columns = [
     { title: 'No', dataIndex: 'No', key: 'No' },
     { title: 'Student ID', dataIndex: 'Student ID', key: 'Student ID' },
     { title: 'Student First Name', dataIndex: 'Student first name', key: 'Student first name' },
     { title: 'Student Last Name', dataIndex: 'Student last name', key: 'Student last name' },
-    { title: 'MCQ Q1', dataIndex: 'mcq_q1', key: 'mcq_q1' },
-    { title: 'MCQ Q2', dataIndex: 'mcq_q2', key: 'mcq_q2' },
-    { title: 'MCQ Q3', dataIndex: 'mcq_q3', key: 'mcq_q3' },
-    { title: 'MCQ Q4', dataIndex: 'mcq_q4', key: 'mcq_q4' },
-    { title: 'MCQ Q5', dataIndex: 'mcq_q5', key: 'mcq_q5' },
-    { title: 'WQ Q1', dataIndex: 'wq_q1', key: 'wq_q1' },
-    { title: 'WQ Q2', dataIndex: 'wq_q2', key: 'wq_q2' },
+    { title: 'Total Score', dataIndex: 'Total Score', key: 'Total Score' },
     { title: 'Note', dataIndex: 'Note', key: 'Note' },
+   
   ];
 
-  // Process the data as needed for display, ensuring the data keys match column dataIndeces
-  const processedData = data.map((item, index) => ({
-    key: index.toString(),
-    ...item,
-  }));
+
+  const save = (key) => {
+    form.validateFields().then(async (row) => {
+      const newData = [...data];
+      const index = newData.findIndex(item => key === item.key);
+      const item = newData[index];
+      newData.splice(index, 1, { ...item, ...row });
+      setData(newData);
+      setEditingKey('');
+    });
+  };
 
   return (
-    <Table columns={columns} dataSource={data} pagination={false} rowKey="No" />
+    <Table
+      columns={columns}
+      dataSource={data}
+      pagination={false}
+      rowKey="No"
+      expandedRowRender={(record) => (
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={save}
+          initialValues={{
+            'Total Score': record['Total Score'],
+            questions: record.questions.map(question => ({
+              questionId: question.questionId,
+              score: question.score,
+              maxScore: question.maxScore,
+              clo: question.clo,
+            })),
+          }}
+        >
+          <Form.Item name="Total Score" label="Total Score">
+            <InputNumber disabled />
+          </Form.Item>
+          <Form.Item name="absent" valuePropName="checked">
+            <Checkbox>Absent</Checkbox>
+          </Form.Item>
+          <Form.List name="questions">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map((field, index) => (
+                  <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                    <Form.Item
+                      {...field}
+                      name={[field.name, 'questionId']}
+                      fieldKey={[field.fieldKey, 'questionId']}
+                    >
+                      <Input placeholder={`Câu/Tiêu chí ${index + 1}`} disabled />
+                    </Form.Item>
+                    <Form.Item
+                      {...field}
+                      name={[field.name, 'score']}
+                      fieldKey={[field.fieldKey, 'score']}
+                      rules={[{ required: true, message: 'Missing score' }]}
+                    >
+                      <InputNumber placeholder="Score" />
+                    </Form.Item>
+                    <Form.Item
+                      {...field}
+                      name={[field.name, 'maxScore']}
+                      fieldKey={[field.fieldKey, 'maxScore']}
+                    >
+                      <InputNumber placeholder="Max Score" disabled />
+                    </Form.Item>
+                    <Form.Item
+                      {...field}
+                      name={[field.name, 'clo']}
+                      fieldKey={[field.fieldKey, 'clo']}
+                    >
+                      <Input placeholder="CLO" disabled />
+                    </Form.Item>
+                  </Space>
+                ))}
+              </>
+            )}
+          </Form.List>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Save
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
+    />
   );
 };
 

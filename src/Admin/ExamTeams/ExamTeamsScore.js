@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button, Upload, message } from 'antd';
+import { Button, Upload, message, Modal } from 'antd';
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import ExamTeamsScoreTable from './ExamTeamsScoreTable';
 import { setDataListExamteams } from '../../Redux/actions/actionExamteams';
@@ -8,7 +8,63 @@ import * as XLSX from 'xlsx';
 export default function ExamTeamsScore() {
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
+
+
+
+  const mockData = [
+    {
+       key: '1',
+       'No': '1',
+       'Student ID': 'S001',
+       'Student first name': 'John',
+       'Student last name': 'Doe',
+       'Total Score': 80,
+       'Note': 'Good performance',
+       absent: false, // This is now at the student level
+       questions: [
+         {
+           questionId: 'Q1',
+           score: 40,
+           maxScore:50,
+           clo: 'CLO1, CLO2',
+         },
+         {
+           questionId: 'Q2',
+           score: 40,
+           maxScore:50,
+           clo: 'CLO1',
+         },
+         // Add more questions as needed
+       ],
+    },
+    {
+       key: '2',
+       'No': '2',
+       'Student ID': 'S002',
+       'Student first name': 'Jane',
+       'Student last name': 'Smith',
+       'Total Score': 90,
+       'Note': 'Excellent performance',
+       absent: true, // This is now at the student level
+       questions: [
+         {
+           questionId: 'Q1',
+           score: 85,
+           clo: 'CLO1, CLO2',
+         },
+         {
+           questionId: 'Q2',
+           score: 85,
+           clo: 'CLO1',
+         },
+         // Add more questions as needed
+       ],
+    },
+    // Add more students as needed
+   ];
+   
   useEffect(() => {
     dispatch(setDataListExamteams());
   }, [dispatch]);
@@ -43,6 +99,18 @@ export default function ExamTeamsScore() {
     }
     return true;
   };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+};
+
+const handleOk = () => {
+    setIsModalVisible(false);
+};
+
+const handleCancel = () => {
+    setIsModalVisible(false);
+};
 
 
   const handleSaveScores = () => {
@@ -89,13 +157,22 @@ export default function ExamTeamsScore() {
   return (
     <div className="container mx-auto">
       <h1 className="text-2xl">Exam Teams Scores</h1>
-      <Upload
-        beforeUpload={beforeUpload}
-        customRequest={({ file }) => handleFileUpload(file)}
-        showUploadList={false}
-      >
-        <Button icon={<UploadOutlined />}>Import Scores from Excel</Button>
-      </Upload>
+      <Button icon={<UploadOutlined />} onClick={showModal}>Import from Excel</Button>
+
+      <Modal title="Import Excel File" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                <Upload
+                    beforeUpload={beforeUpload}
+                    customRequest={({ file }) => handleFileUpload(file)}
+                    showUploadList={false}
+                >
+                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+                <div>
+                    <a href="src/Admin/Sample/Examscore.xlsx" download="Exam Score Sample.xlsx">Download Sample File</a>
+                </div>
+            </Modal>
+
+      
       <Button
         type="primary"
         onClick={handleSaveScores}
@@ -117,7 +194,9 @@ export default function ExamTeamsScore() {
           </Button>
         </a>
       )}
-      <ExamTeamsScoreTable data={fileData} />
+      {/* <ExamTeamsScoreTable data={fileData} /> */}
+      { <ExamTeamsScoreTable initialData={mockData} /> }
+
     </div>
   );
 }

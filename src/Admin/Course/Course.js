@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Input, Upload, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import CourseTable from "./CourseTable";
 import {
   searchCourse,
@@ -31,9 +31,10 @@ export default function Course() {
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const excelData = XLSX.utils.sheet_to_json(worksheet);
-  
+
       const formattedData = excelData.map((item) => ({
         courseInfo: {
+          id: item["No"],
           courseId: item["Course ID"],
           courseName: item["Course Name"],
         },
@@ -44,20 +45,24 @@ export default function Course() {
           { clo4: item["CLO4"], cloNote: item["CLO4_Note"] },
           { clo5: item["CLO5"], cloNote: item["CLO5_Note"] },
           { clo6: item["CLO6"], cloNote: item["CLO6_Note"] },
-        ].filter(clo => clo.clo1 || clo.clo2 || clo.clo3 || clo.clo4 || clo.clo5 || clo.clo6), 
+        ].filter(
+          (clo) =>
+            clo.clo1 || clo.clo2 || clo.clo3 || clo.clo4 || clo.clo5 || clo.clo6
+        ),
         nofClos: item["CLOs"],
       }));
-      
 
       dispatch(importCourses(formattedData));
     };
     reader.readAsBinaryString(file);
     return false; // Prevent upload
   };
-  
 
   const beforeUpload = (file) => {
-    const isExcel = file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.type === "application/vnd.ms-excel";
+    const isExcel =
+      file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      file.type === "application/vnd.ms-excel";
     if (!isExcel) {
       message.error(`${file.name} is not an excel file`);
     }
@@ -68,7 +73,6 @@ export default function Course() {
     <div className="container mx-auto">
       <h1 className="text-2xl">COURSE</h1>
       <div className="flex justify-between items-center">
-
         <Upload
           beforeUpload={beforeUpload}
           customRequest={({ file }) => handleFileUpload(file)}
@@ -77,7 +81,12 @@ export default function Course() {
           <Button icon={<UploadOutlined />}>Import từ Excel</Button>
         </Upload>
       </div>
-      <br/>
+      <br />
+      <a href={`/assets/ExampleCourse.xlsx`} download="ExampleCourse.xlsx">
+        Download Mẫu Course
+      </a>
+      <br />
+
       <Search
         placeholder="Nhập tên khóa học muốn tìm"
         allowClear

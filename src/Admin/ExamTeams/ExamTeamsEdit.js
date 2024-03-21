@@ -61,7 +61,7 @@ const ExamTeamsEdit = () => {
     for (let i = 0; i < examStructure.NoofQuestion; i++) {
       inputs.push(
         <Row key={i} gutter={16}>
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item
               name={["examStructure", "tieuchi", i, "id"]}
               label={`Câu/Tiêu chí ${i + 1} (CLOs)`}
@@ -69,7 +69,7 @@ const ExamTeamsEdit = () => {
               <Input />
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item
               name={["examStructure", "tieuchi", i, "maxScore"]}
               label={`Max Score`}
@@ -77,7 +77,7 @@ const ExamTeamsEdit = () => {
               <Input />
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item
               name={["examStructure", "tieuchi", i, "note"]}
               label={`Note`}
@@ -210,6 +210,8 @@ const ExamTeamsEdit = () => {
         visible={examStructureModalVisible}
         onCancel={() => setExamStructureModalVisible(false)}
         footer={null}
+        width={800} // Adjust the width value as needed
+
       >
         <Form
           form={examStructureForm}
@@ -236,7 +238,7 @@ const ExamTeamsEdit = () => {
           >
             <InputNumber
               min={0}
-              max={20}
+              max={110}
               onChange={(value) =>
                 setExamStructure({ ...examStructure, TotalScore: value })
               }

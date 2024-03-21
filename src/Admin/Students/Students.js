@@ -43,10 +43,10 @@ export default function Student() {
         studentId: item['Student ID'],
         studentFirstName: item['Student first name'],
         studentLastName: item['Student last name'],
-        classId: item['Course Name'], // Ví dụ: API có thể gọi là 'courseId' thay vì 'classId'
-        courseGroups: item['Course Group'], // Đảm bảo tên trường này khớp với API
-        courseName: item['Course Name'], // Đảm bảo tên trường này khớp với API
-        violation: item['Violation'],
+        dayOFBirth: item["Day of birth"],
+        classId: item['Class ID'], // Ví dụ: API có thể gọi là 'courseId' thay vì 'classId' --> 'classId' là mã lớp của SV lúc vào trường, ko phải mã lớp môn học
+        semester: item['Semester'], // Đảm bảo tên trường này khớp với API
+        schoolYear: item['School Year'], // Đảm bảo tên trường này khớp với API
         note: item['Note']
       }));
   
