@@ -105,7 +105,7 @@ export default function ExamTeams() {
                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
                 </Upload>
                 <div>
-                    <a href="src/Admin/Sample/[Ip_Exam Team]_Sem 1_23_24.xlsx" download="Exam Team Sample.xlsx">Download Sample File</a>
+                    <a href={`/assets/ExampleExamTeam.xlsx`} download="ExampleExamTeam.xlsx">Download Sample File</a>
                 </div>
             </Modal>
             
