@@ -20,7 +20,6 @@ export default function StudentTable({dataListStudent = []}){
        classId: item.classId,
        courseName: item.courseName,
        courseGroups: item.courseGroups,
-       violation: item.violation,
        note: item.note,
     }));
   }
@@ -62,11 +61,6 @@ export default function StudentTable({dataListStudent = []}){
       title: 'Course Group',
       dataIndex: 'courseName',
       key: 'courseName',
-    },
-    {
-      title: 'Violation',
-      dataIndex: 'violation',
-      key: 'violation',
     },
     {
       title: 'Note',
