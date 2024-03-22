@@ -15,7 +15,7 @@ const CourseEdit = () => {
       try {
         const data = await courseServ.getCourse(id);
         if (data) {
-          const validCLOsCount = data.CLOs.filter(clo => clo.clo1 || clo.clo2 || clo.clo3 || clo.clo4 || clo.clo5 || clo.clo6).length;
+          const validCLOsCount = data.CLOs.filter((clo) => clo.clo1 || clo.clo2 || clo.clo3 || clo.clo4 || clo.clo5 || clo.clo6).length;
           form.setFieldsValue({
             ...data,
             nofClos: validCLOsCount,
@@ -30,6 +30,19 @@ const CourseEdit = () => {
     }
     fetchData();
   }, [id, form]);
+
+  useEffect(() => {
+    // Ensure that the form list adjusts to the numberOfCLOs
+    const fields = form.getFieldValue('CLOs') || [];
+    const fieldsLength = fields.length;
+    if (numberOfCLOs > fieldsLength) {
+      for (let i = fieldsLength; i < numberOfCLOs; i++) {
+        form.setFieldsValue({ CLOs: [...fields, {}] }); // Adding empty objects for each new CLO
+      }
+    } else {
+      form.setFieldsValue({ CLOs: fields.slice(0, numberOfCLOs) }); // Trimming the fields to the new count
+    }
+  }, [numberOfCLOs, form]);
 
   const onFinish = async (values) => {
     try {
@@ -104,7 +117,7 @@ const CourseEdit = () => {
 
       <Form.List name="CLOs">
         {(fields, { add, remove }) => {
-          fields = fields.slice(0, numberOfCLOs); // Đảm bảo số lượng fields phản ánh số lượng CLOs được chọn
+          fields = fields.slice(0, numberOfCLOs);
           return (
             <>
               {fields.map(({ key, name, fieldKey, ...restField }, index) => (
