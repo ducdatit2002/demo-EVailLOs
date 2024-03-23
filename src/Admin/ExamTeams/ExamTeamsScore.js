@@ -59,10 +59,8 @@ export default function ExamTeamsScore() {
            score: 85,
            clo: 'CLO1',
          },
-         // Add more questions as needed
        ],
     },
-    // Add more students as needed
    ];
    
   useEffect(() => {
@@ -168,7 +166,7 @@ const handleCancel = () => {
                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
                 </Upload>
                 <div>
-                    <a href="src/Admin/Sample/Examscore.xlsx" download="Exam Score Sample.xlsx">Download Sample File</a>
+                <a href={`/assets/Examscore.xlsx`} download="Examscore.xlsx">Download Sample File</a>
                 </div>
             </Modal>
 
