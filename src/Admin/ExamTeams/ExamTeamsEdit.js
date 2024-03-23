@@ -10,6 +10,7 @@ import {
   Col,
   Alert,
   InputNumber,
+  Table,
 } from "antd";
 import { examteamsServ } from "../../Services/examteamsService";
 
@@ -20,12 +21,14 @@ const ExamTeamsEdit = () => {
   const [examStructureForm] = Form.useForm();
   const [examStructureModalVisible, setExamStructureModalVisible] =
     useState(false);
+  const [rubricModalVisible, setRubricModalVisible] = useState(false);
   const [examStructure, setExamStructure] = useState({
     NoofQuestion: 0,
     TotalScore:0,
     tieuchi: [],
   });
   const [warning, setWarning] = useState(false);
+  const [rubrics, setRubrics] = useState([{ criteria: [] }]);
 
 
   useEffect(() => {
@@ -102,16 +105,25 @@ const ExamTeamsEdit = () => {
     }
   };
 
+  const addRubric = () => {
+    setRubrics([...rubrics, { criteria: [] }]);
+ };
 
-  return (
-    <div>
-      <Form
-        form={form}
-        onFinish={onFinishMainForm}
-        layout="vertical"
-        name="editExamTeamForm"
-      >
-        <Form.Item>
+ const addCriterion = (rubricIndex) => {
+    const newRubrics = [...rubrics];
+    newRubrics[rubricIndex].criteria.push({});
+    setRubrics(newRubrics);
+ };
+
+ return (
+  <div>
+    <Form
+      form={form}
+      onFinish={onFinishMainForm}
+      layout="vertical"
+      name="editExamTeamForm"
+    >
+<Form.Item>
           <Button type="primary" htmlType="submit">
             Update Exam Team
           </Button>
@@ -191,68 +203,62 @@ const ExamTeamsEdit = () => {
               <Input />
             </Form.Item>
           </Col>
-        </Row>
-        <Button
-          style={{
-            backgroundColor: "#4CAF50",
-            color: "white",
-            borderColor: "#4CAF50",
-          }}
-          type="primary"
-          onClick={() => setExamStructureModalVisible(true)}
-        >
-          Edit Exam Structure
-        </Button>
-      </Form>
-
-      <Modal
-        title="Edit Exam Structure"
-        visible={examStructureModalVisible}
-        onCancel={() => setExamStructureModalVisible(false)}
-        footer={null}
-        width={800} // Adjust the width value as needed
-
+        </Row>      <Button
+        style={{
+          backgroundColor: "#4CAF50",
+          color: "white",
+          borderColor: "#4CAF50",
+        }}
+        type="primary"
+        onClick={() => setExamStructureModalVisible(true)}
       >
-        <Form
-          form={examStructureForm}
-          onFinish={onExamStructureFinish}
-          layout="vertical"
-          name="examStructureForm"
-          initialValues={{ examStructure: examStructure }}
-        >
-          <Form.Item
-            name={["examStructure", "NoofQuestion"]}
-            label="Number of Questions"
-          >
-            <InputNumber
-              min={0}
-              max={20}
-              onChange={(value) =>
-                setExamStructure({ ...examStructure, NoofQuestion: value })
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            name={["examStructure", "TotalScore"]}
-            label="Total Score"
-          >
-            <InputNumber
-              min={0}
-              max={110}
-              onChange={(value) =>
-                setExamStructure({ ...examStructure, TotalScore: value })
-              }
-            />
-          </Form.Item>
+        Edit Exam Structure
+      </Button>
+      <Button
+        style={{
+          backgroundColor: "#4CAF50",
+          color: "white",
+          borderColor: "#4CAF50",
+          marginLeft: 10,
+        }}
+        type="primary"
+        onClick={() => setRubricModalVisible(true)}
+      >
+        Set Rubric
+      </Button>
+    </Form>
 
-          {renderTieuchiInputs()}
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Save Exam Structure
-            </Button>
-          </Form.Item>
-        </Form>
+ 
+      <Modal
+        title="Set Rubric"
+        visible={rubricModalVisible}
+        onCancel={() => setRubricModalVisible(false)}
+        footer={null}
+        width={800}
+      >
+        {rubrics.map((rubric, rubricIndex) => (
+          <div key={rubricIndex}>
+            <h3>Rubric {rubricIndex + 1}</h3>
+            {rubric.criteria.map((criterion, criterionIndex) => (
+              <div key={criterionIndex}>
+                <Form.Item label="Criteria Name">
+                 <Input placeholder="Criteria Name" />
+                </Form.Item>
+                <Form.Item label="Note">
+                 <Input placeholder="Note" />
+                </Form.Item>
+                <Form.Item label="Lower Score">
+                 <InputNumber placeholder="Lower Score" />
+                </Form.Item>
+                <Form.Item label="Upper Score">
+                 <InputNumber placeholder="Upper Score" />
+                </Form.Item>
+              </div>
+            ))}
+            <Button onClick={() => addCriterion(rubricIndex)}>Add Criterion</Button>
+          </div>
+        ))}
+        <Button onClick={addRubric}>Add Rubric</Button>
       </Modal>
 
       {warning && (
