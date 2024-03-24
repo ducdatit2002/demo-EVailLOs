@@ -13,12 +13,14 @@ import {
   Table,
 } from "antd";
 import { examteamsServ } from "../../Services/examteamsService";
+import { CloseCircleOutlined } from '@ant-design/icons';
+
 
 const ExamTeamsEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  // const [examStructureForm] = Form.useForm();
+  const [examStructureForm] = Form.useForm();
   const [examStructureModalVisible, setExamStructureModalVisible] =
   useState(false);
   const [rubricModalVisible, setRubricModalVisible] = useState(false);
@@ -107,40 +109,82 @@ const ExamTeamsEdit = () => {
   };
 
   const addRubric = () => {
-    setRubrics([...rubrics, { id: rubrics.length }]);
+    setRubrics([...rubrics, { id: rubrics.length + 1 }]);
    };
    
    const addCriterion = () => {
-    setCriteria([...criteria, { id: criteria.length, name: '', note: '', lowerScore: 0, upperScore: 0 }]);
+    setCriteria([...criteria, { id: criteria.length + 1, name: '', note: '', lowerScore: 0, upperScore: 0 }]);
    };
    
+   const removeRubric = (id) => {
+    setRubrics(rubrics.filter(rubric => rubric.id !== id));
+   };
    
+   const removeCriterion = (id) => {
+    setCriteria(criteria.filter(criterion => criterion.id !== id));
+   };
+      
    const renderRubricCriteriaMatrix = () => {
     return (
        <Table
          dataSource={rubrics}
          columns={[
            {
-             title: 'Rubric',
+             title: 'Rubric/Criteria',
              dataIndex: 'id',
              key: 'id',
-             render: (text, record, index) => `Rubric ${index + 1}`,
+             render: (text, record, index) => (
+               <div>
+                 {`Rubric ${index + 1}`}
+                 <Button
+                   type="link"
+                   danger
+                   onClick={() => removeRubric(record.id)}
+                   style={{ float: 'right' }}
+                   icon={<CloseCircleOutlined />}
+                 />
+               </div>
+             ),
            },
            ...criteria.map((criterion, criterionIndex) => ({
              title: (
                <div>
+                 <Button
+                   type="link"
+                   danger
+                   onClick={() => removeCriterion(criterion.id)}
+                   style={{ float: 'right' }}
+                   icon={<CloseCircleOutlined />}
+                 />
                  <Form.Item label="Criteria Name">
+              
                    <Input placeholder="Criteria Name" />
                  </Form.Item>
                  <Form.Item label="Note">
                    <Input placeholder="Note" />
                  </Form.Item>
-                 <Form.Item label="Lower Score">
-                   <InputNumber placeholder="Lower Score" />
+                 <Form.Item label="Score Range">
+                   <Row gutter={8}>
+                    <Col span={10}>
+                       <Form.Item
+                         name={["examStructure", "tieuchi", criterionIndex, "lowerScore"]}
+                       >
+                         <InputNumber placeholder="00" />
+                       </Form.Item>
+                    </Col>
+                    <Col span={4} style={{ textAlign: 'center' }}>
+                       to
+                    </Col>
+                    <Col span={10}>
+                       <Form.Item
+                         name={["examStructure", "tieuchi", criterionIndex, "upperScore"]}
+                       >
+                         <InputNumber placeholder="00" />
+                       </Form.Item>
+                    </Col>
+                   </Row>
                  </Form.Item>
-                 <Form.Item label="Upper Score">
-                   <InputNumber placeholder="Upper Score" />
-                 </Form.Item>
+                
                </div>
              ),
              dataIndex: `criterion${criterionIndex}`,
@@ -157,6 +201,7 @@ const ExamTeamsEdit = () => {
        />
     );
    };
+   
    
 
  return (
@@ -247,7 +292,11 @@ const ExamTeamsEdit = () => {
               <Input />
             </Form.Item>
           </Col>
-        </Row>      <Button
+        </Row>      
+        
+        
+        
+        <Button
         style={{
           backgroundColor: "#4CAF50",
           color: "white",
@@ -273,24 +322,76 @@ const ExamTeamsEdit = () => {
     </Form>
 
  
+
     <Modal
  title="Set Rubric"
  visible={rubricModalVisible}
  onCancel={() => setRubricModalVisible(false)}
  footer={null}
- width={800}
+ width={"auto"} // Set width to auto for dynamic adjustment
+ style={{ minWidth: '500px' }} // Set a minimum width to prevent the modal from becoming too narrow
 >
  {renderRubricCriteriaMatrix()}
  <Button onClick={addRubric}>Add Rubric</Button>
  <Button onClick={addCriterion}>Add Criterion</Button>
 </Modal>
 
+<Modal
+        title="Edit Exam Structure"
+        visible={examStructureModalVisible}
+        onCancel={() => setExamStructureModalVisible(false)}
+        footer={null}
+        width={800} // Adjust the width value as needed
+
+      >
+        <Form
+          form={examStructureForm}
+          onFinish={onExamStructureFinish}
+          layout="vertical"
+          name="examStructureForm"
+          initialValues={{ examStructure: examStructure }}
+        >
+          <Form.Item
+            name={["examStructure", "NoofQuestion"]}
+            label="Number of Questions"
+          >
+            <InputNumber
+              min={0}
+              max={20}
+              onChange={(value) =>
+                setExamStructure({ ...examStructure, NoofQuestion: value })
+              }
+            />
+          </Form.Item>
+          <Form.Item
+            name={["examStructure", "TotalScore"]}
+            label="Total Score"
+          >
+            <InputNumber
+              min={0}
+              max={110}
+              onChange={(value) =>
+                setExamStructure({ ...examStructure, TotalScore: value })
+              }
+            />
+          </Form.Item>
+
+          {renderTieuchiInputs()}
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Save Exam Structure
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
 
 
       {warning && (
         <Alert
           message="Warning"
-          description="The sum of all max scores is greater than the total score."
+          description="The sum of all max scores can not be greater than the total score."
           type="warning"
           showIcon
           closable
