@@ -123,6 +123,13 @@ const ExamTeamsEdit = () => {
    const removeCriterion = (id) => {
     setCriteria(criteria.filter(criterion => criterion.id !== id));
    };
+
+   const saveRubric = () => {
+    setRubrics([...rubrics]);
+    setCriteria([...criteria]);
+    message.success('Rubric saved successfully');
+  };
+
       
    const renderRubricCriteriaMatrix = () => {
     return (
@@ -334,6 +341,7 @@ const ExamTeamsEdit = () => {
  {renderRubricCriteriaMatrix()}
  <Button onClick={addRubric}>Add Rubric</Button>
  <Button onClick={addCriterion}>Add Criterion</Button>
+ <Button type="primary" onClick={saveRubric}>Save Rubric</Button>
 </Modal>
 
 <Modal
