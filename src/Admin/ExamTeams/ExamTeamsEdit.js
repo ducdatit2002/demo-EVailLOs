@@ -18,9 +18,9 @@ const ExamTeamsEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [examStructureForm] = Form.useForm();
+  // const [examStructureForm] = Form.useForm();
   const [examStructureModalVisible, setExamStructureModalVisible] =
-    useState(false);
+  useState(false);
   const [rubricModalVisible, setRubricModalVisible] = useState(false);
   const [examStructure, setExamStructure] = useState({
     NoofQuestion: 0,
@@ -28,8 +28,9 @@ const ExamTeamsEdit = () => {
     tieuchi: [],
   });
   const [warning, setWarning] = useState(false);
-  const [rubrics, setRubrics] = useState([{ criteria: [] }]);
-
+  const [rubrics, setRubrics] = useState([{ id: 0 }]);
+  const [criteria, setCriteria] = useState([{ id: 0, name: '', note: '', lowerScore: 0, upperScore: 0 }]);
+  
 
   useEffect(() => {
     examteamsServ.getExamteams(id).then((data) => {
@@ -106,14 +107,57 @@ const ExamTeamsEdit = () => {
   };
 
   const addRubric = () => {
-    setRubrics([...rubrics, { criteria: [] }]);
- };
-
- const addCriterion = (rubricIndex) => {
-    const newRubrics = [...rubrics];
-    newRubrics[rubricIndex].criteria.push({});
-    setRubrics(newRubrics);
- };
+    setRubrics([...rubrics, { id: rubrics.length }]);
+   };
+   
+   const addCriterion = () => {
+    setCriteria([...criteria, { id: criteria.length, name: '', note: '', lowerScore: 0, upperScore: 0 }]);
+   };
+   
+   
+   const renderRubricCriteriaMatrix = () => {
+    return (
+       <Table
+         dataSource={rubrics}
+         columns={[
+           {
+             title: 'Rubric',
+             dataIndex: 'id',
+             key: 'id',
+             render: (text, record, index) => `Rubric ${index + 1}`,
+           },
+           ...criteria.map((criterion, criterionIndex) => ({
+             title: (
+               <div>
+                 <Form.Item label="Criteria Name">
+                   <Input placeholder="Criteria Name" />
+                 </Form.Item>
+                 <Form.Item label="Note">
+                   <Input placeholder="Note" />
+                 </Form.Item>
+                 <Form.Item label="Lower Score">
+                   <InputNumber placeholder="Lower Score" />
+                 </Form.Item>
+                 <Form.Item label="Upper Score">
+                   <InputNumber placeholder="Upper Score" />
+                 </Form.Item>
+               </div>
+             ),
+             dataIndex: `criterion${criterionIndex}`,
+             key: `criterion${criterionIndex}`,
+             render: (text, record) => (
+               <div>
+                 {/* Render the rubric's score for this criterion */}
+                 <Input placeholder="Criteria Description" />
+               </div>
+             ),
+           })),
+         ]}
+         pagination={false}
+       />
+    );
+   };
+   
 
  return (
   <div>
@@ -229,37 +273,19 @@ const ExamTeamsEdit = () => {
     </Form>
 
  
-      <Modal
-        title="Set Rubric"
-        visible={rubricModalVisible}
-        onCancel={() => setRubricModalVisible(false)}
-        footer={null}
-        width={800}
-      >
-        {rubrics.map((rubric, rubricIndex) => (
-          <div key={rubricIndex}>
-            <h3>Rubric {rubricIndex + 1}</h3>
-            {rubric.criteria.map((criterion, criterionIndex) => (
-              <div key={criterionIndex}>
-                <Form.Item label="Criteria Name">
-                 <Input placeholder="Criteria Name" />
-                </Form.Item>
-                <Form.Item label="Note">
-                 <Input placeholder="Note" />
-                </Form.Item>
-                <Form.Item label="Lower Score">
-                 <InputNumber placeholder="Lower Score" />
-                </Form.Item>
-                <Form.Item label="Upper Score">
-                 <InputNumber placeholder="Upper Score" />
-                </Form.Item>
-              </div>
-            ))}
-            <Button onClick={() => addCriterion(rubricIndex)}>Add Criterion</Button>
-          </div>
-        ))}
-        <Button onClick={addRubric}>Add Rubric</Button>
-      </Modal>
+    <Modal
+ title="Set Rubric"
+ visible={rubricModalVisible}
+ onCancel={() => setRubricModalVisible(false)}
+ footer={null}
+ width={800}
+>
+ {renderRubricCriteriaMatrix()}
+ <Button onClick={addRubric}>Add Rubric</Button>
+ <Button onClick={addCriterion}>Add Criterion</Button>
+</Modal>
+
+
 
       {warning && (
         <Alert
