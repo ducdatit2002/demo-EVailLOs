@@ -11,10 +11,12 @@ import {
   Alert,
   InputNumber,
   Table,
+  Select,
 } from "antd";
 import { examteamsServ } from "../../Services/examteamsService";
 import { CloseCircleOutlined } from '@ant-design/icons';
 
+const { Option } = Select;
 
 const ExamTeamsEdit = () => {
   const { id } = useParams();
@@ -32,7 +34,8 @@ const ExamTeamsEdit = () => {
   const [warning, setWarning] = useState(false);
   const [rubrics, setRubrics] = useState([{ id: 0 }]);
   const [criteria, setCriteria] = useState([{ id: 0, name: '', note: '', lowerScore: 0, upperScore: 0 }]);
-  
+  const [customQuestions, setCustomQuestions] = useState("");
+
 
   useEffect(() => {
     examteamsServ.getExamteams(id).then((data) => {
@@ -47,6 +50,15 @@ const ExamTeamsEdit = () => {
     const sumOfMaxScores = maxScores.reduce((sum, score) => sum + score, 0);
     setWarning(sumOfMaxScores > totalScore);
   }, [examStructure]);
+
+// Function to handle the change in the select dropdown
+const handleOptionChange = (value) => {
+  setExamStructure({ ...examStructure, Option: value });
+  if (value === "Custom") {
+    // If Custom is selected, clear the custom questions input
+    setCustomQuestions("");
+  }
+};
 
   const onExamStructureFinish = async (values) => {
 
@@ -383,6 +395,28 @@ const ExamTeamsEdit = () => {
               }
             />
           </Form.Item>
+          <Form.Item name={['examStructure', 'Option']} label="Rubrics setting">
+            <Select
+              style={{ width: '100%' }}
+              onChange={handleOptionChange}
+              defaultValue="None"
+            >
+              <Option value="All">All</Option>
+              <Option value="Custom">Custom</Option>
+              <Option value="None">None</Option>
+            </Select>
+          </Form.Item>
+            {/* Conditionally render the input field for custom questions */}
+            {examStructure.Option === "Custom" && (
+            <Form.Item label="Enter Custom Questions">
+              <Input
+    placeholder="Enter question numbers separated by commas, e.g., 1, 2, 3"
+    value={customQuestions}
+                onChange={(e) => setCustomQuestions(e.target.value)}
+              />
+            </Form.Item>
+          )}
+
 
           {renderTieuchiInputs()}
 
