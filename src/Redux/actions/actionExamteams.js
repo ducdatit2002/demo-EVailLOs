@@ -1,6 +1,7 @@
 // actionExamteams
 import {
   SET_DATA_EXAMTEAMS,
+  UPDATE_EXAM_TEAMS_SCORES,
 } from "../constant/constantExamteams";
 import { examteamsServ } from "../../Services/examteamsService";
 
@@ -8,8 +9,12 @@ export const setDataListExamteamsSuccess = (successValue) => ({
     type: SET_DATA_EXAMTEAMS,
     payload: successValue,
 });
+const initialState = {
+  dataListExamteams: [],
+  examteams: null,
+};
 
-// In actionExamteams.js or wherever your actions are defined
+
 
 export const setDataListExamteams = () => (dispatch) => {
   examteamsServ
@@ -71,16 +76,26 @@ export const importExamTeams = (examTeamsData) => {
   };
 };
 
-export const importExamTeamsScores = (scoresData) => {
-  return (dispatch) => {
-    examteamsServ
-      .importExamTeamsScore(scoresData) // Use the correct service method for importing scores
-      .then((response) => {
-        console.log("Scores import successful", response);
-        dispatch(setDataListExamteams()); // Fetch the updated list if necessary
-      })
-      .catch((error) => {
-        console.error("Scores import failed", error);
-      });
+// Trong actionExamteams
+// Trong actionExamteams
+export const importExamTeamsScores = (id, scoresData) => {
+  return async (dispatch) => {
+    try {
+      const response = await examteamsServ.importExamTeamsScore(id, { examScore: scoresData });
+      console.log("Scores import successful", response);
+      dispatch(setDataListExamteams()); // Cập nhật danh sách sau khi import nếu cần
+    } catch (error) {
+      console.error("Scores import failed", error);
+    }
   };
 };
+
+
+// Trong actions.js hoặc actionExamteams.js
+export const updateExamTeamsScores = (scoresData) => ({
+  type: UPDATE_EXAM_TEAMS_SCORES, // Đảm bảo type này phù hợp với reducer
+  payload: scoresData,
+});
+
+
+

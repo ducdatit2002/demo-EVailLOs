@@ -1,107 +1,143 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Form, Input, Button, InputNumber, Select, Checkbox, Space } from 'antd';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Table, Modal, Form, Input, Button } from 'antd';
+import { importExamTeamsScores } from '../../Redux/actions/actionExamteams';
 
-const ExamTeamsScoreTable = ({ initialData }) => {
-  const [data, setData] = useState(initialData);
-  const [editingKey, setEditingKey] = useState('');
+const ExamTeamsScoreTable = ({ data, id, onDataChange }) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [tempScores, setTempScores] = useState([]); 
   const [form] = Form.useForm();
-
-  const columns = [
-    { title: 'No', dataIndex: 'No', key: 'No' },
-    { title: 'Student ID', dataIndex: 'Student ID', key: 'Student ID' },
-    { title: 'Student First Name', dataIndex: 'Student first name', key: 'Student first name' },
-    { title: 'Student Last Name', dataIndex: 'Student last name', key: 'Student last name' },
-    { title: 'Total Score', dataIndex: 'Total Score', key: 'Total Score' },
-    { title: 'Note', dataIndex: 'Note', key: 'Note' },
-   
-  ];
-
-
-  const save = (key) => {
-    form.validateFields().then(async (row) => {
-      const newData = [...data];
-      const index = newData.findIndex(item => key === item.key);
-      const item = newData[index];
-      newData.splice(index, 1, { ...item, ...row });
-      setData(newData);
-      setEditingKey('');
+const dispatch = useDispatch();
+  const showEditModal = (record) => {
+    setEditingStudent(record);
+    setIsModalVisible(true);
+    // Set giá trị cho form dựa trên dữ liệu của sinh viên được chọn
+    const scores = record.student.scores.reduce((acc, curr) => {
+      acc[curr.title] = curr.score; // Sửa đổi tại đây
+      return acc;
+    }, {});
+    form.setFieldsValue({
+      ...scores, // Đảm bảo rằng các điểm được set vào form
+      note: record.student.note,
     });
   };
 
+
+  const handleOk = () => {
+    form.validateFields().then((values) => {
+      // Map the form values back to the student scores structure
+      const updatedScores = editingStudent.student.scores.map(score => ({
+        ...score,
+        score: values[score.title], // Update the score based on the form values
+      }));
+  
+      // Prepare the updated student object with the new scores
+      const updatedStudentData = {
+        ...editingStudent,
+        student: {
+          ...editingStudent.student,
+          scores: updatedScores,
+          note: values.note,
+        },
+      };
+  
+      // Call the onDataChange prop with the updated scores
+      // This should update the tempScores state in the parent component
+      onDataChange(data.map(item => 
+        item.student.studentID === updatedStudentData.student.studentID ? updatedStudentData : item
+      ));
+  
+      setIsModalVisible(false);
+    }).catch(info => {
+      console.log('Validate Failed:', info);
+    });
+  };
+  
+  
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const generateColumns = () => {
+    const baseColumns = [
+      { title: 'STT', dataIndex: 'stt', key: 'stt', render: (_, __, index) => index + 1 },
+      { title: 'Student ID', dataIndex: ['student', 'studentID'], key: 'studentID' },
+      { title: 'Student First Name', dataIndex: ['student', 'studentFirstName'], key: 'firstName' },
+      { title: 'Student Last Name', dataIndex: ['student', 'studentLastName'], key: 'lastName' },
+      { title: 'Note', dataIndex: ['student', 'note'], key: 'note' },
+      
+    ];
+  
+    // Collect all unique score titles across all students
+    const scoreTitles = data.reduce((titles, item) => {
+      // Ensure 'scores' is an array before calling forEach
+      if (Array.isArray(item.student.scores)) {
+        item.student.scores.forEach(score => {
+          if (score && !titles.includes(score.title)) {
+            titles.push(score.title);
+          }
+        });
+      }
+      return titles;
+    }, []);
+  
+    // Create a column for each score title
+    const scoreColumns = scoreTitles.map(title => ({
+      title,
+      dataIndex: ['student', 'scores'],
+      key: title,
+      render: (scores) => {
+        // Safely find the score object with the matching title
+        const scoreObject = scores?.find(s => s.title === title);
+        return scoreObject ? scoreObject.score : '-';
+      },
+    }));
+    
+    return [...baseColumns, ...scoreColumns];
+  };
+  
+  const dataSource = data.map((item, index) => ({
+    key: index,
+    stt: index + 1,
+    ...item,
+  }));
+
   return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      pagination={false}
-      rowKey="No"
-      expandedRowRender={(record) => (
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={save}
-          initialValues={{
-            'Total Score': record['Total Score'],
-            questions: record.questions.map(question => ({
-              questionId: question.questionId,
-              score: question.score,
-              maxScore: question.maxScore,
-              clo: question.clo,
-            })),
-          }}
+    <>
+      <Table
+        dataSource={dataSource}
+        columns={generateColumns()}
+        pagination={false}
+        onRow={(record) => ({
+          onClick: () => showEditModal(record),
+        })}
+      />
+  <Modal
+    title="Edit Student Scores"
+    visible={isModalVisible}
+    onOk={handleOk}
+    onCancel={handleCancel}
+    okText="Save"
+    cancelText="Cancel"
+  >
+    <Form form={form} layout="vertical">
+      {editingStudent?.student.scores.map((score, index) => (
+        <Form.Item
+          key={index}
+          name={score.title} // Use the score title as the name of the Form.Item
+          label={score.title} // The label is also the score title
         >
-          <Form.Item name="Total Score" label="Total Score">
-            <InputNumber disabled />
-          </Form.Item>
-          <Form.Item name="absent" valuePropName="checked">
-            <Checkbox>Absent</Checkbox>
-          </Form.Item>
-          <Form.List name="questions">
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map((field, index) => (
-                  <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                    <Form.Item
-                      {...field}
-                      name={[field.name, 'questionId']}
-                      fieldKey={[field.fieldKey, 'questionId']}
-                    >
-                      <Input placeholder={`Câu/Tiêu chí ${index + 1}`} disabled />
-                    </Form.Item>
-                    <Form.Item
-                      {...field}
-                      name={[field.name, 'score']}
-                      fieldKey={[field.fieldKey, 'score']}
-                      rules={[{ required: true, message: 'Missing score' }]}
-                    >
-                      <InputNumber placeholder="Score" />
-                    </Form.Item>
-                    <Form.Item
-                      {...field}
-                      name={[field.name, 'maxScore']}
-                      fieldKey={[field.fieldKey, 'maxScore']}
-                    >
-                      <InputNumber placeholder="Max Score" disabled />
-                    </Form.Item>
-                    <Form.Item
-                      {...field}
-                      name={[field.name, 'clo']}
-                      fieldKey={[field.fieldKey, 'clo']}
-                    >
-                      <Input placeholder="CLO" disabled />
-                    </Form.Item>
-                  </Space>
-                ))}
-              </>
-            )}
-          </Form.List>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Save
-            </Button>
-          </Form.Item>
-        </Form>
-      )}
-    />
+          <Input />
+        </Form.Item>
+      ))}
+      <Form.Item name="note" label="Note">
+        <Input />
+      </Form.Item>
+    </Form>
+  </Modal>
+    </>
   );
 };
 

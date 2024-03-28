@@ -75,13 +75,17 @@ export const examteamsServ = {
         throw error;
       });
   },
-  importExamTeamsScore: (data) => {
+  // Trong hàm importExamTeamsScore của examteamsService
+  importExamTeamsScore: (id, data) => {
     return https
-      .post("/api/examteams/", data) // Make sure the endpoint matches your API
-      .then((response) => response.data)
+      .put(`/api/examteams/${id}`, data) // Thay đổi endpoint này để phản ánh cập nhật điểm
+      .then((response) => {
+        console.log("Import Exam Teams Score response:", response.data);
+        return response.data;
+      })
       .catch((error) => {
+        console.error("Import Exam Teams Score error:", error);
         throw error;
       });
   },
 };
-
